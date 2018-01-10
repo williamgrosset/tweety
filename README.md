@@ -1,2 +1,2 @@
 # wreck
-:bird: A custom-built web client to support TCP/HTTP.
+:bird: A basic web client to communicate with a server via sockets.
