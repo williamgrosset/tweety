@@ -2,11 +2,15 @@
 
 import socket
 
-s = socket.socket()
-host = socket.gethostbyname('www.uvic.ca')
-port = 8080
+# TODO: parse URL from command-line arg(s)
 
-s.connect((host, port))
-print(s.recv(1024))
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# TODO: error handling support for port
+s.connect(('www.google.com', 80))
+
+s.send('GET / HTTP/1.0\n\n'.encode('utf-8'))
+resp = s.recv(1024)
+print(resp)
 
 s.close()
