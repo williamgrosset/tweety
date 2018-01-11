@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 import socket
 import ssl
 
