@@ -12,11 +12,12 @@ def recv_timeout(socket):
     return ''.join(total_data)
 
 def parse_resp(resp):
+    # Remove empty items (from \r\n) from array
     return resp.split('\r\n')
 
 def find_redirect_location(resp_arr):
     for string in resp_arr:
-        if 'Location:' in string:
+        if 'location:' in string:
             return string[10:]
 
 def requires_https(redirect_location):
@@ -29,23 +30,28 @@ def requires_https(redirect_location):
 # TODO: parse URL from command-line arg(s)
 
 uw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-uw.connect(('facebook.com', 80))
+uw.connect(('twitter.com', 80))
 
-uw.send('GET / HTTP/1.0\r\nHost: facebook.com\r\n\r\n'.encode('utf-8'))
+# TODO: Loop and redirect until we get a 200 status code (break on error)
+# Initially make an HTTP call following the 1.0 specificationd (TODO: header formatting)
+# Loop and handle each status code appropriately (404, 401, 302, 301, 200)
+# Once we hit a 200, parse and save response
+
+# Pull URL into host param
+uw.send('GET / HTTP/1.0\r\nHost: twitter.com\r\n\r\n'.encode('utf-8'))
 resp = recv_timeout(uw)
 resp_array = parse_resp(resp)
 redirect_location = find_redirect_location(resp_array)
 print(resp_array)
 print(redirect_location)
 
-# TODO: Loop and redirect until we get a 200 status code (break on error)
-
 if requires_https(redirect_location):
     # Requires use to open and close the socket?
     uw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s = ssl.wrap_socket(uw, ssl_version=ssl.PROTOCOL_TLS)
-    s.connect(('facebook.com', 443))
-    s.send('GET https://www.facebook.com/unsupportedbrowser HTTP/1.0\r\nHost: facebook.com\r\n\r\n'.encode('utf-8'))
+    s.connect(('twitter.com', 443))
+    # Pull URL into host param (varies betweeen using www.)
+    s.send('GET / HTTP/1.0\r\nHost: twitter.com\r\n\r\n'.encode('utf-8'))
     resp = recv_timeout(s)
     print(resp)
 else:
