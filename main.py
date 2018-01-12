@@ -14,6 +14,13 @@ def recv_timeout(socket):
 def parse_resp(resp):
     return resp.decode().split('\r\n')
 
+def find_redirect_location(resp_arr):
+    for string in resp_arr:
+        if 'Location:' in string:
+            return string[10:]
+
+# def requires_https(redirect_location):
+
 # TODO: parse URL from command-line arg(s)
 host_ip = socket.gethostbyname('www.ubc.ca')
 
@@ -33,9 +40,11 @@ host_ip = socket.gethostbyname('www.ubc.ca')
 uw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 uw.connect((host_ip, 80))
 
-uw.send('GET / HTTP/1.0\r\n\r\n'.encode('utf-8'))
+uw.send('GET https://www.ubc.ca/ HTTP/1.0\r\n\r\n'.encode('utf-8'))
 resp = recv_timeout(uw)
-print(parse_resp(resp))
+resp_array = parse_resp(resp)
+print(resp_array)
+print(find_redirect_location(resp_array))
 
 
 uw.close()
