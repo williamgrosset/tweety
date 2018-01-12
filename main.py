@@ -19,32 +19,33 @@ def find_redirect_location(resp_arr):
         if 'Location:' in string:
             return string[10:]
 
-# def requires_https(redirect_location):
+def requires_https(redirect_location):
+    if 'https' in redirect_location:
+        return True
+    else:
+        return False
 
 # TODO: parse URL from command-line arg(s)
-host_ip = socket.gethostbyname('www.ubc.ca')
 
-# TODO: Handle regular http (w/o SSL wrap)
-# Initialize socket
-# Sockt connection on port 80
-# Hit http request (if we hit a 301 or 302 - target https support boolean flag)
-# Wrap socket in a SSL
-# Reinitialize socket connection (port 443) and send
-
-# Initialize socket, wrap in SSL, and connect to host ip
-# uw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# s = ssl.wrap_socket(uw, ssl_version=ssl.PROTOCOL_TLS)
-# s.connect((host_ip, 80))
-
-# New
 uw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-uw.connect((host_ip, 80))
+uw.connect(('amazon.com', 80))
 
-uw.send('GET https://www.ubc.ca/ HTTP/1.0\r\n\r\n'.encode('utf-8'))
+uw.send('GET / HTTP/1.0\r\n\r\n'.encode('utf-8'))
 resp = recv_timeout(uw)
 resp_array = parse_resp(resp)
+redirect_location = find_redirect_location(resp_array)
 print(resp_array)
-print(find_redirect_location(resp_array))
+print(redirect_location)
 
+# TODO: Loop and redirect until we get a 200 status code (break on error)
 
-uw.close()
+if requires_https(redirect_location):
+    uw.close()
+    uw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s = ssl.wrap_socket(uw, ssl_version=ssl.PROTOCOL_TLS)
+    s.connect(('amazon.com', 443))
+    s.send('GET / HTTP/1.0\r\n\r\n'.encode('utf-8'))
+    resp = recv_timeout(s)
+    print(resp)
+else:
+    uw.close()

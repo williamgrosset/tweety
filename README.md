@@ -4,6 +4,9 @@
 ### TODO
 + Normalize line endings (`\n`)
 + Section descriptions:
-    + HTTP Protocol w/ TCP connection
-    + Sockets
-    + SSL support
+  + HTTP Protocol w/ TCP connection
+  + Sockets
+  + SSL support
+
+Edge cases:
+  + `400` Host-Header required
