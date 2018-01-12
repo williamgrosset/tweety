@@ -4,5 +4,6 @@
 ### TODO
 + Normalize line endings (`\n`)
 + Section descriptions:
+    + HTTP Protocol w/ TCP connection
     + Sockets
     + SSL support
