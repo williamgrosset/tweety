@@ -30,8 +30,9 @@ def requires_https(redirect_location):
         return False
 
 def send_request(socket, location, host):
-    # TODO: Define HTTP 1.0 spec using BNF format (and pull into sep func)
-    socket.send(('GET ' + location + ' HTTP/1.0\r\nHost: ' + host + '\r\n' + REQUEST_HEADER + '\r\n').encode('utf-8'))
+    # TODO: Define HTTP 1.0 spec using BNF format
+    # TODO: Test with HTTP/2.0 servers
+    socket.send(('GET ' + location + ' HTTP/1.0\r\nHost: ' + host + '\r\n' + REQUEST_HEADER + '\r\n\r\n').encode('utf-8'))
 
 '''
 def create_http_header():
@@ -45,7 +46,7 @@ def get_status_code(resp_arr):
 '''
 
 GENERAL_HEADER = ''
-REQUEST_HEADER = 'From: williamhgrosset@gmail.com\r\n'
+REQUEST_HEADER = 'From: williamhgrosset@gmail.com'
 ENTITY_HEADER = ''
 
 # TODO: parse URL from command-line arg(s)
