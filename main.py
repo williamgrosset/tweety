@@ -2,7 +2,7 @@
 import socket
 import ssl
 
-def recv_timeout(socket):
+def recv_stream(socket):
     total_data = []
     while True:
         # Update 4096 to MAX_PACKET size?
@@ -13,16 +13,17 @@ def recv_timeout(socket):
     return ''.join(total_data)
 
 def parse_response(response):
-    # Remove empty items (from \r\n) from array
+    # TODO: Remove empty items from array
     return response.split('\r\n')
 
 def get_redirect_location(resp_arr):
     for string in resp_arr:
+        # TODO: Full regex of location: http(s)://domain.com/
         if 'Location:' in string or 'location:' in string:
             return string[10:]
 
 def requires_https(redirect_location):
-    # TODO: Check in start of URL
+    # TODO: Check beginning of URL
     if 'https' in redirect_location:
         return True
     else:
@@ -43,7 +44,9 @@ def get_status_code(resp_arr):
     # parse string for matching status code (regex)
 '''
 
+GENERAL_HEADER = ''
 REQUEST_HEADER = 'From: williamhgrosset@gmail.com\r\n'
+ENTITY_HEADER = ''
 
 # TODO: parse URL from command-line arg(s)
 
@@ -57,7 +60,7 @@ uw.connect(('twitter.com', 80))
 
 # Pull URL into host param
 send_request(uw, '/', 'twitter.com')
-resp = recv_timeout(uw)
+resp = recv_stream(uw)
 resp_array = parse_response(resp)
 redirect_location = get_redirect_location(resp_array)
 print(resp_array)
@@ -71,9 +74,9 @@ if requires_https(redirect_location):
     # Reference URL into host param (varies betweeen using www.)
     # Reference redirect_location in after GET method
     send_request(s, '/', 'twitter.com')
-    resp = recv_timeout(s)
+    resp = recv_stream(s)
     print(resp)
 else:
-    resp = recv_timeout(uw)
+    resp = recv_stream(uw)
     print(resp)
     uw.close()
