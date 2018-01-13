@@ -11,6 +11,7 @@ def recv_timeout(socket):
     total_data = []
     while True:
         # Update 4096 to MAX_PACKET size?
+        # issues with decoding? :/
         data = socket.recv(4096).decode('utf-8')
         if not data: break
         total_data.append(data)
@@ -38,6 +39,8 @@ def get_status_code(resp_arr):
     # parse string for matching status code (regex)
 '''
 
+REQUEST_HEADER = 'From: williamhgrosset@gmail.com\r\n'
+
 # TODO: parse URL from command-line arg(s)
 
 # TODO: Loop and redirect until we get a 200 status code (break on error)
@@ -61,8 +64,11 @@ if requires_https(redirect_location):
     uw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s = ssl.wrap_socket(uw, ssl_version = ssl.PROTOCOL_TLS)
     s.connect(('twitter.com', 443))
-    # Pull URL into host param (varies betweeen using www.)
-    s.send('GET / HTTP/1.0\r\nHost: twitter.com\r\n\r\n'.encode('utf-8'))
+    # Reference URL into host param (varies betweeen using www.)
+    # Reference redirect_location in after GET method
+
+    # TODO: Define HTTP 1.0 spec using BNF format (and pull into sep func)
+    s.send(('GET / HTTP/1.0\r\nHost: twitter.com\r\n' + REQUEST_HEADER + '\r\n').encode('utf-8'))
     resp = recv_timeout(s)
     print(resp)
 else:
