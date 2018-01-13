@@ -10,6 +10,7 @@
   + HTTP Protocol w/ TCP connection
   + Sockets
   + SSL support
++ Close out all socket TCP connections? (`s.close()`)
 
 Edge cases:
 + `400` Host-Header required

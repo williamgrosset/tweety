@@ -6,7 +6,7 @@ def recv_stream(socket):
     total_data = []
     while True:
         # Update 4096 to MAX_PACKET size?
-        # issues with decoding? :/
+        # issues with decoding? non utf-8 characters? :/
         data = socket.recv(4096).decode('utf-8')
         if not data: break
         total_data.append(data)
@@ -41,7 +41,7 @@ def create_http_header():
 '''
 def get_status_code(resp_arr):
     string = resp_arr[0]
-    # parse string for matching status code (regex)
+    # parse string for matching status code (regex) HTTP/1.1 200
 '''
 
 GENERAL_HEADER = ''
@@ -60,10 +60,10 @@ uw.connect(('twitter.com', 80))
 
 # Pull URL into host param
 send_request(uw, '/', 'twitter.com')
-resp = recv_stream(uw)
-resp_array = parse_response(resp)
-redirect_location = get_redirect_location(resp_array)
-print(resp_array)
+response = recv_stream(uw)
+parsed_response_array = parse_response(response)
+redirect_location = get_redirect_location(parsed_response_array)
+print(parsed_response_array)
 print(redirect_location)
 
 if requires_https(redirect_location):
@@ -74,9 +74,9 @@ if requires_https(redirect_location):
     # Reference URL into host param (varies betweeen using www.)
     # Reference redirect_location in after GET method
     send_request(s, '/', 'twitter.com')
-    resp = recv_stream(s)
-    print(resp)
+    response = recv_stream(s)
+    print(response)
 else:
-    resp = recv_stream(uw)
-    print(resp)
+    response = recv_stream(uw)
+    print(response)
     uw.close()
