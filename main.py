@@ -27,11 +27,15 @@ def get_redirect_location(resp_arr):
             return string[10:]
 
 def requires_https(redirect_location):
-    # Check in start of URL
+    # TODO: Check in start of URL
     if 'https' in redirect_location:
         return True
     else:
         return False
+
+def send_request(socket, location, host):
+    # TODO: Define HTTP 1.0 spec using BNF format (and pull into sep func)
+    socket.send(('GET ' + location + ' HTTP/1.0\r\nHost: ' + host + '\r\n' + REQUEST_HEADER + '\r\n').encode('utf-8'))
 
 '''
 def get_status_code(resp_arr):
@@ -52,7 +56,7 @@ uw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 uw.connect(('twitter.com', 80))
 
 # Pull URL into host param
-uw.send('GET / HTTP/1.0\r\nHost: twitter.com\r\n\r\n'.encode('utf-8'))
+send_request(uw, '/', 'twitter.com')
 resp = recv_timeout(uw)
 resp_array = parse_resp(resp)
 redirect_location = get_redirect_location(resp_array)
@@ -66,9 +70,7 @@ if requires_https(redirect_location):
     s.connect(('twitter.com', 443))
     # Reference URL into host param (varies betweeen using www.)
     # Reference redirect_location in after GET method
-
-    # TODO: Define HTTP 1.0 spec using BNF format (and pull into sep func)
-    s.send(('GET / HTTP/1.0\r\nHost: twitter.com\r\n' + REQUEST_HEADER + '\r\n').encode('utf-8'))
+    send_request(s, '/', 'twitter.com')
     resp = recv_timeout(s)
     print(resp)
 else:
