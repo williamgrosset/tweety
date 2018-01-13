@@ -2,11 +2,6 @@
 import socket
 import ssl
 
-'''
-def create_http_header():
-# GENERAL, REQUEST, then ENTITY
-'''
-
 def recv_timeout(socket):
     total_data = []
     while True:
@@ -17,9 +12,9 @@ def recv_timeout(socket):
         total_data.append(data)
     return ''.join(total_data)
 
-def parse_resp(resp):
+def parse_response(response):
     # Remove empty items (from \r\n) from array
-    return resp.split('\r\n')
+    return response.split('\r\n')
 
 def get_redirect_location(resp_arr):
     for string in resp_arr:
@@ -36,6 +31,11 @@ def requires_https(redirect_location):
 def send_request(socket, location, host):
     # TODO: Define HTTP 1.0 spec using BNF format (and pull into sep func)
     socket.send(('GET ' + location + ' HTTP/1.0\r\nHost: ' + host + '\r\n' + REQUEST_HEADER + '\r\n').encode('utf-8'))
+
+'''
+def create_http_header():
+# GENERAL, REQUEST, then ENTITY
+'''
 
 '''
 def get_status_code(resp_arr):
@@ -58,7 +58,7 @@ uw.connect(('twitter.com', 80))
 # Pull URL into host param
 send_request(uw, '/', 'twitter.com')
 resp = recv_timeout(uw)
-resp_array = parse_resp(resp)
+resp_array = parse_response(resp)
 redirect_location = get_redirect_location(resp_array)
 print(resp_array)
 print(redirect_location)
