@@ -3,6 +3,10 @@ import socket
 import ssl
 import re
 
+GENERAL_HEADER = ''
+REQUEST_HEADER = 'From: williamhgrosset@gmail.com'
+ENTITY_HEADER = ''
+
 def recv_stream(socket):
     total_data = []
     while True:
@@ -42,37 +46,6 @@ def create_http_header():
     # GENERAL, REQUEST, then ENTITY
 '''
 
-
-'''
-def handle_response(status_code):
-    # Status codes can be found at /RFC1945#section-6.1.1
-    # OK
-    if status_code == 200:
-    # Moved Permanently
-    elif status_code == 301:
-    # Moved Temporarily
-    elif status_code == 302:
-    # Bad Request
-    elif status_code == 400:
-    # Unauthorized
-    elif status_code == 401:
-    # Not found
-    elif status_code == 404:
-    # Internal Server Error
-    elif status_code == 500:
-    # Not Implemented
-    elif status_code == 501:
-    # Bad Gateway
-    elif status_code == 502:
-    # Service Unavailable
-    elif status_code == 503:
-    else
-'''
-
-GENERAL_HEADER = ''
-REQUEST_HEADER = 'From: williamhgrosset@gmail.com'
-ENTITY_HEADER = ''
-
 # TODO: parse URL from command-line arg(s)
 
 # TODO: Loop and redirect until we get a 200 status code (break on error)
@@ -92,6 +65,30 @@ print(parsed_response_array)
 print(redirect_location)
 
 status_code = print(get_status_code(parsed_response_array[0]))
+
+while True:
+    # Status codes can be found at /RFC1945#section-6.1.1
+    # OK
+    if status_code == 200: break
+    # Moved Permanently
+    elif status_code == 301: break
+    # Moved Temporarily
+    elif status_code == 302: break
+    # Bad Request
+    elif status_code == 400: break
+    # Unauthorized
+    elif status_code == 401: break
+    # Not found
+    elif status_code == 404: break
+    # Internal Server Error
+    elif status_code == 500: break
+    # Not Implemented
+    elif status_code == 501: break
+    # Bad Gateway
+    elif status_code == 502: break
+    # Service Unavailable
+    elif status_code == 503: break
+    else: break
 
 if requires_https(redirect_location):
     # Requires use to open and close the socket?
