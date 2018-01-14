@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import socket
 import ssl
+import re
 
 def recv_stream(socket):
     total_data = []
@@ -15,67 +16,59 @@ def parse_response(response):
     # TODO: Remove empty items from array
     return response.split('\r\n')
 
-def get_redirect_location(resp_arr):
-    for string in resp_arr:
+def get_redirect_location(response_array):
+    for string in response_array:
         # TODO: Full regex of location: http(s)://domain.com/
         if 'Location:' in string or 'location:' in string:
             return string[10:]
 
 def requires_https(redirect_location):
     # TODO: Check beginning of URL
-    if 'https' in redirect_location:
-        return True
-    else:
-        return False
+    if 'https' in redirect_location: return True
+    else: return False
 
 def send_request(socket, location, host):
     # TODO: Define HTTP 1.0 spec using BNF format
     # TODO: Test with HTTP/2.0 servers
     socket.send(('GET ' + location + ' HTTP/1.0\r\nHost: ' + host + '\r\n' + REQUEST_HEADER + '\r\n\r\n').encode('utf-8'))
 
+def get_status_code(response_partial):
+    # TODO: Parse string for matching status code (regex) HTTP/1.1 200
+    status_code_match = re.match('HTTP\/\d\.\d (\d{3}).*', response_partial)
+    if status_code_match:
+        print(status_code_match.group(1))
+    else:
+        print('No match')
+
 '''
 def create_http_header():
     # GENERAL, REQUEST, then ENTITY
 '''
 
-'''
-def get_status_code(response_partial):
-    # TODO: Parse string for matching status code (regex) HTTP/1.1 200
-'''
 
 '''
 def handle_response(status_code):
     # Status codes can be found at /RFC1945#section-6.1.1
     # OK
     if status_code == 200:
-
     # Moved Permanently
     elif status_code == 301:
-
     # Moved Temporarily
     elif status_code == 302:
-
     # Bad Request
     elif status_code == 400:
-
     # Unauthorized
     elif status_code == 401:
-
     # Not found
     elif status_code == 404:
-
     # Internal Server Error
     elif status_code == 500:
-
     # Not Implemented
     elif status_code == 501:
-
     # Bad Gateway
     elif status_code == 502:
-
     # Service Unavailable
     elif status_code == 503:
-
     else
 '''
 
@@ -101,6 +94,8 @@ redirect_location = get_redirect_location(parsed_response_array)
 print(parsed_response_array)
 print(redirect_location)
 
+status_code = get_status_code(parsed_response_array[0])
+
 if requires_https(redirect_location):
     # Requires use to open and close the socket?
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -110,7 +105,7 @@ if requires_https(redirect_location):
     # Reference redirect_location in after GET method
     send_request(sslclient, '/', 'twitter.com')
     response = recv_stream(sslclient)
-    print(response)
+    # print(response)
 else:
     response = recv_stream(client)
     print(response)
