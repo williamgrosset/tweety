@@ -32,13 +32,10 @@ def send_request(socket, location, host):
     # TODO: Test with HTTP/2.0 servers
     socket.send(('GET ' + location + ' HTTP/1.0\r\nHost: ' + host + '\r\n' + REQUEST_HEADER + '\r\n\r\n').encode('utf-8'))
 
-def get_status_code(response_partial):
-    # TODO: Parse string for matching status code (regex) HTTP/1.1 200
-    status_code_match = re.match('HTTP\/\d\.\d (\d{3}).*', response_partial)
-    if status_code_match:
-        print(status_code_match.group(1))
-    else:
-        print('No match')
+def get_status_code(status_line):
+    status_code_match = re.match('HTTP\/\d\.\d (\d{3}).*', status_line)
+    if status_code_match: return int(status_code_match.group(1))
+    else: return 0
 
 '''
 def create_http_header():
@@ -94,7 +91,7 @@ redirect_location = get_redirect_location(parsed_response_array)
 print(parsed_response_array)
 print(redirect_location)
 
-status_code = get_status_code(parsed_response_array[0])
+status_code = print(get_status_code(parsed_response_array[0]))
 
 if requires_https(redirect_location):
     # Requires use to open and close the socket?
