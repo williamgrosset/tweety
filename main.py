@@ -56,12 +56,12 @@ ENTITY_HEADER = ''
 # Loop and handle each status code appropriately (5xx, 404, 401, 302, 301, 200)
 # Once we hit a 200, parse and save response
 
-uw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-uw.connect(('twitter.com', 80))
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(('twitter.com', 80))
 
 # Pull URL into host param
-send_request(uw, '/', 'twitter.com')
-response = recv_stream(uw)
+send_request(client, '/', 'twitter.com')
+response = recv_stream(client)
 parsed_response_array = parse_response(response)
 redirect_location = get_redirect_location(parsed_response_array)
 print(parsed_response_array)
@@ -69,15 +69,15 @@ print(redirect_location)
 
 if requires_https(redirect_location):
     # Requires use to open and close the socket?
-    uw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s = ssl.wrap_socket(uw, ssl_version = ssl.PROTOCOL_TLS)
-    s.connect(('twitter.com', 443))
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sslclient = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
+    sslclient.connect(('twitter.com', 443))
     # Reference URL into host param (varies betweeen using www.)
     # Reference redirect_location in after GET method
-    send_request(s, '/', 'twitter.com')
-    response = recv_stream(s)
+    send_request(sslclient, '/', 'twitter.com')
+    response = recv_stream(sslclient)
     print(response)
 else:
-    response = recv_stream(uw)
+    response = recv_stream(client)
     print(response)
-    uw.close()
+    client.close()
