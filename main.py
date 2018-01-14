@@ -38,8 +38,8 @@ def send_request(socket, location, host):
 
 def get_status_code(status_line):
     status_code_match = re.match('HTTP\/\d\.\d (\d{3}).*', status_line)
-    if status_code_match: return int(status_code_match.group(1))
-    else: return 0
+    if status_code_match: return status_code_match.group(1)
+    else: return 'No status code found.'
 
 '''
 def create_http_header():
@@ -69,25 +69,25 @@ status_code = print(get_status_code(parsed_response_array[0]))
 while True:
     # Status codes can be found at /RFC1945#section-6.1.1
     # OK
-    if status_code == 200: break
+    if status_code == '200': break
     # Moved Permanently
-    elif status_code == 301: break
+    elif status_code == '301': break
     # Moved Temporarily
-    elif status_code == 302: break
+    elif status_code == '302': break
     # Bad Request
-    elif status_code == 400: break
+    elif status_code == '400': break
     # Unauthorized
-    elif status_code == 401: break
+    elif status_code == '401': break
     # Not found
-    elif status_code == 404: break
+    elif status_code == '404': break
     # Internal Server Error
-    elif status_code == 500: break
+    elif status_code == '500': break
     # Not Implemented
-    elif status_code == 501: break
+    elif status_code == '501': break
     # Bad Gateway
-    elif status_code == 502: break
+    elif status_code == '502': break
     # Service Unavailable
-    elif status_code == 503: break
+    elif status_code == '503': break
     else: break
 
 if requires_https(redirect_location):
