@@ -5,9 +5,8 @@ import ssl
 def recv_stream(socket):
     total_data = []
     while True:
-        # Update 4096 to MAX_PACKET size?
-        # issues with decoding? non utf-8 characters? :/
-        data = socket.recv(4096).decode('utf-8')
+        # Handle decoding error?
+        data = socket.recv(8192).decode('utf-8')
         if not data: break
         total_data.append(data)
     return ''.join(total_data)
@@ -36,13 +35,48 @@ def send_request(socket, location, host):
 
 '''
 def create_http_header():
-# GENERAL, REQUEST, then ENTITY
+    # GENERAL, REQUEST, then ENTITY
 '''
 
 '''
-def get_status_code(resp_arr):
-    string = resp_arr[0]
-    # parse string for matching status code (regex) HTTP/1.1 200
+def get_status_code(response_partial):
+    # TODO: Parse string for matching status code (regex) HTTP/1.1 200
+'''
+
+'''
+def handle_response(status_code):
+    # Status codes can be found at /RFC1945#section-6.1.1
+    # OK
+    if status_code == 200:
+
+    # Moved Permanently
+    elif status_code == 301:
+
+    # Moved Temporarily
+    elif status_code == 302:
+
+    # Bad Request
+    elif status_code == 400:
+
+    # Unauthorized
+    elif status_code == 401:
+
+    # Not found
+    elif status_code == 404:
+
+    # Internal Server Error
+    elif status_code == 500:
+
+    # Not Implemented
+    elif status_code == 501:
+
+    # Bad Gateway
+    elif status_code == 502:
+
+    # Service Unavailable
+    elif status_code == 503:
+
+    else
 '''
 
 GENERAL_HEADER = ''
