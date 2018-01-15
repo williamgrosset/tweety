@@ -16,22 +16,18 @@ def recv_stream(socket):
         total_data.append(data)
     return ''.join(total_data).strip()
 
-def split_response(response):
-    return response.split('\r\n')
-
-def get_redirect_location(response_array):
-    location_pattern = re.compile('[L|l]ocation: (http.*)')
-    for string_partial in response_array:
-        if location_pattern.match(string_partial):
-            return string_partial[10:]
+def get_redirect_location(response):
+    location_match = re.search('[L|l]ocation: (http.*)', response)
+    if location_match: return location_match.group(0)[10:]
+    return 'Could not resolve redirect location.'
 
 def get_host_url(location):
     location_match = re.match('http[s*]:\/\/(.*)', location)
     if location_match: return location_match.group(1)
     return 'Could not resolve host url.'
 
-def requires_https(redirect_location):
-    if redirect_location.startswith('https'): return True
+def requires_https(location):
+    if location.startswith('https'): return True
     else: return False
 
 def send_request(socket, location, host):
@@ -39,9 +35,9 @@ def send_request(socket, location, host):
     # TODO: Test with HTTP/2.0 servers
     socket.send(('GET ' + location + ' HTTP/1.0\r\nHost: ' + host + '\r\n' + REQUEST_HEADER + '\r\n\r\n').encode('utf-8'))
 
-def get_status_code(status_line):
+def get_status_code(response):
     # Status codes can be found at https://tools.ietf.org/html/rfc1945#section-6.1.1
-    status_code_match = re.match('HTTP\/\d\.\d (\d{3}).*', status_line)
+    status_code_match = re.search('HTTP\/\d\.\d (\d{3}).*', response)
     if status_code_match: return status_code_match.group(1)
     else: return 'No status code found.'
 
@@ -55,11 +51,11 @@ def handle_redirect(client, location, host):
         # host: e.g. www.twitter.com or twitter.com
         send_request(sslclient, '/', host)
         response = recv_stream(sslclient)
-        # print(response)
+        print(response)
     else:
         send_request(client, '/', host)
         response = recv_stream(client)
-        # print(response)
+        print(response)
 
 '''
 def create_http_header():
@@ -82,11 +78,9 @@ response = recv_stream(client)
 print(response)
 
 while True:
-    parsed_response_array = split_response(response)
-    print(parsed_response_array)
-    redirect_location = get_redirect_location(parsed_response_array)
+    redirect_location = get_redirect_location(response)
     print(redirect_location)
-    status_code = get_status_code(parsed_response_array[0])
+    status_code = get_status_code(response)
     host = 'twitter.com'
 
     # OK
