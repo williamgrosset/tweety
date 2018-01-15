@@ -16,8 +16,8 @@ def recv_stream(socket):
     return b''.join(total_data).strip().decode('utf-8')
 
 def get_redirect_location(response):
-    location_match = re.search('[L|l]ocation: (http.*)', response)
-    if location_match: return location_match.group(0)[10:].strip()
+    location_match = re.search('[L|l]ocation: (http[s*]:\/\/[a-zA-Z0-9_\.\/]+).*', response)
+    if location_match: return location_match.group(1).strip()
     return 'Could not resolve redirect location.'
 
 def get_host_domain(location):
@@ -47,16 +47,11 @@ def create_http_header():
 
 # TODO: parse URL from command-line arg(s)
 
-# TODO: Loop and redirect until we get a 200 status code (break on error)
-# Initially make an HTTP call following the 1.0 specification (TODO: header formatting)
-# Loop and handle each status code appropriately (5xx, 404, 401, 302, 301, 200)
-# Once we hit a 200, parse and save response
-
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(('twitter.com', 80))
+client.connect(('facebook.com', 80))
 
 # TODO: Pull URL into host param
-send_request(client, '/', 'twitter.com')
+send_request(client, '/', 'facebook.com')
 response = recv_stream(client)
 redirect_location = get_redirect_location(response)
 host = get_host_domain(redirect_location)
@@ -67,18 +62,20 @@ while True:
     # OK
     if status_code == '200':
         print('In 200')
-        # print(response)
+        print(response)
         client.close()
         break
     # Moved Permanently or Moved Temporarily (redirect)
     elif status_code == '301' or status_code == '302':
         if requires_https(redirect_location):
+            print('In 301')
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
-            ssl_client.connect(('twitter.com', 443))
+            ssl_client.connect(('facebook.com', 443))
             send_request(ssl_client, redirect_location, host)
             response = recv_stream(ssl_client)
         else:
+            print('In 302')
             send_request(client, redirect_location, host)
             response = recv_stream(client)
 
