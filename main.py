@@ -17,14 +17,13 @@ def recv_stream(socket):
     return ''.join(total_data).strip()
 
 def parse_response(response):
-    # TODO: Remove empty items from array
     return response.split('\r\n')
 
 def get_redirect_location(response_array):
-    for string in response_array:
-        # TODO: Full regex of location: http(s)://domain.com/*
-        if 'Location:' in string or 'location:' in string:
-            return string[10:]
+    location_pattern = re.compile('[L|l]ocation: (http.*)')
+    for string_partial in response_array:
+        if location_pattern.match(string_partial):
+            return string_partial[10:]
 
 def requires_https(redirect_location):
     # TODO: Check beginning of URL
