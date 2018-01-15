@@ -14,7 +14,7 @@ def recv_stream(socket):
         data = socket.recv(8192).decode('utf-8')
         if not data: break
         total_data.append(data)
-    return ''.join(total_data)
+    return ''.join(total_data).strip()
 
 def parse_response(response):
     # TODO: Remove empty items from array
