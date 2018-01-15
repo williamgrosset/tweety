@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import sys
 import socket
 import ssl
 import re
@@ -43,18 +44,25 @@ def create_http_header():
 '''
 
 # TODO: parse URL from command-line arg(s)
+def handle_input(args):
+    if (len(args) != 2): print('Enter the correct amount of arguments.')
+    return args[1][5:]
+
 
 def main():
+    url = handle_input(sys.argv)
+    print(url)
+
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(('vsco.co', 80))
+    client.connect((url, 80))
 
     # TODO: Pull URL into host param
-    send_request(client, '/', 'vsco.co')
+    send_request(client, '/', url)
     response = recv_stream(client)
     print('Initial response')
     print(response)
     redirect_location = get_redirect_location(response)
-    host = get_host_domain(redirect_location)
+    host_url = get_host_domain(redirect_location)
 
     while True:
         status_code = get_status_code(response)
@@ -71,17 +79,17 @@ def main():
             if requires_https(redirect_location):
                 print('requires https')
                 ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
-                ssl_client.connect((host, 443))
-                send_request(ssl_client, redirect_location, host)
+                ssl_client.connect((host_url, 443))
+                send_request(ssl_client, redirect_location, host_url)
                 response = recv_stream(ssl_client)
             else:
                 print('does not require https')
-                client.connect((host, 80))
-                send_request(client, redirect_location, host)
+                client.connect((host_url, 80))
+                send_request(client, redirect_location, host_url)
                 response = recv_stream(client)
 
             redirect_location = get_redirect_location(response)
-            host = get_host_domain(redirect_location)
+            host_url = get_host_domain(redirect_location)
         # Bad Request
         elif status_code == '400':
             print(response)
