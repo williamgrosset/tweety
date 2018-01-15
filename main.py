@@ -2,10 +2,7 @@
 import socket
 import ssl
 import re
-
-GENERAL_HEADER = ''
-REQUEST_HEADER = 'From: williamhgrosset@gmail.com'
-ENTITY_HEADER = ''
+import http_constants  
 
 def recv_stream(socket):
     total_data = []
@@ -32,7 +29,7 @@ def requires_https(location):
 def send_request(socket, location, host):
     # TODO: Define HTTP 1.0 spec using BNF format
     # TODO: Test with HTTP/2.0 servers
-    socket.send(('GET ' + location + ' HTTP/1.0\r\nHost: ' + host + '\r\n' + REQUEST_HEADER + '\r\n\r\n').encode('utf-8'))
+    socket.send(('GET ' + location + ' HTTP/1.0\r\nHost: ' + host + '\r\n' + http_constants.REQUEST_HEADER + '\r\n\r\n').encode('utf-8'))
 
 def get_status_code(response):
     # Status codes can be found at https://tools.ietf.org/html/rfc1945#section-6.1.1

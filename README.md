@@ -5,13 +5,13 @@
 + [HTTP/1.0 RFC1945](https://tools.ietf.org/html/rfc1945)
 
 ## TODO
-+ Normalize line endings (`\n`)
 + Section descriptions:
   + HTTP Protocol w/ TCP connection
   + Sockets
   + SSL support
 + Close out all socket TCP connections? (`s.close()`)
 + Create cookie scanner helper
++ String parser helper
 
 Edge cases:
 + `400` Host-Header required
