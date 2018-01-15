@@ -17,12 +17,12 @@ def recv_stream(socket):
 
 def get_redirect_location(response):
     location_match = re.search('[L|l]ocation: (http.*)', response)
-    if location_match: return location_match.group(0)[10:]
+    if location_match: return location_match.group(0)[10:].strip()
     return 'Could not resolve redirect location.'
 
 def get_host_domain(location):
     location_match = re.match('http[s*]:\/\/(.*)\/', location)
-    if location_match: return location_match.group(1)
+    if location_match: return location_match.group(1).strip()
     return 'Could not resolve host url.'
 
 def requires_https(location):
@@ -69,7 +69,7 @@ while True:
     # OK
     if status_code == '200':
         print('In 200')
-        print(response)
+        # print(response)
         client.close()
         break
     # Moved Permanently or Moved Temporarily (redirect)
@@ -78,7 +78,7 @@ while True:
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
             ssl_client.connect(('twitter.com', 443))
-            send_request(ssl_client, '/', host)
+            send_request(ssl_client, redirect_location, host)
             response = recv_stream(ssl_client)
         else:
             send_request(client, '/', host)
