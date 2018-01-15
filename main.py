@@ -25,7 +25,7 @@ def get_host_domain(location):
 
 def requires_https(location):
     if location.startswith('https'): return True
-    else: return False
+    return False
 
 def send_request(socket, location, host):
     # TODO: Define HTTP 1.0 spec using BNF format
@@ -36,22 +36,24 @@ def get_status_code(response):
     # Status codes can be found at https://tools.ietf.org/html/rfc1945#section-6.1.1
     status_code_match = re.search('HTTP\/\d\.\d (\d{3}).*', response)
     if status_code_match: return status_code_match.group(1)
-    else: return 'No status code found.'
+    return 'No status code found.'
 
 '''
 def create_http_header():
     # GENERAL, REQUEST, then ENTITY
 '''
 
-# TODO: parse URL from command-line arg(s)
-def handle_input(args):
+def get_url_from_input(args):
     if (len(args) != 2): print('Enter the correct amount of arguments.')
-    return args[1][5:]
+    url_match = re.match('[www\.]*(.*)', args[1])
+    if url_match: return url_match.group(1).strip()
+    return 'Please enter a valid url.'
 
 
 def main():
-    url = handle_input(sys.argv)
+    url = get_url_from_input(sys.argv)
     print(url)
+    # if not valid url: return
 
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((url, 80))
