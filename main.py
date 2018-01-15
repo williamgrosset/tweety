@@ -46,10 +46,10 @@ def create_http_header():
 
 def main():
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(('youtube.com', 80))
+    client.connect(('vsco.co', 80))
 
     # TODO: Pull URL into host param
-    send_request(client, '/', 'youtube.com')
+    send_request(client, '/', 'vsco.co')
     response = recv_stream(client)
     print('Initial response')
     print(response)
@@ -90,6 +90,8 @@ def main():
         elif status_code == '401': break
         # Not found
         elif status_code == '404': break
+        # Upgrade Required
+        elif status_code == '426': break
         # Internal Server Error
         elif status_code == '500': break
         # Not Implemented
