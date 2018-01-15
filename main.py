@@ -58,13 +58,11 @@ client.connect(('twitter.com', 80))
 # TODO: Pull URL into host param
 send_request(client, '/', 'twitter.com')
 response = recv_stream(client)
+redirect_location = get_redirect_location(response)
+host = get_host_domain(redirect_location)
 
 while True:
     status_code = get_status_code(response)
-    # TODO: Don't update these variables here
-    redirect_location = get_redirect_location(response)
-    print(redirect_location)
-    host = get_host_domain(redirect_location)
 
     # OK
     if status_code == '200':
@@ -81,8 +79,11 @@ while True:
             send_request(ssl_client, redirect_location, host)
             response = recv_stream(ssl_client)
         else:
-            send_request(client, '/', host)
+            send_request(client, redirect_location, host)
             response = recv_stream(client)
+
+        redirect_location = get_redirect_location(response)
+        host = get_host_domain(redirect_location)
     # Bad Request
     elif status_code == '400':
         print(response)
