@@ -13,12 +13,12 @@ def recv_stream(socket):
     return b''.join(total_data).strip().decode('utf-8')
 
 def get_redirect_location(response):
-    location_match = re.search('[L|l]ocation: (http[s*]:\/\/[a-zA-Z0-9_\.\/]+).*', response)
+    location_match = re.search('[L|l]ocation: (https*:\/\/[a-zA-Z0-9_\.\/]+).*', response)
     if location_match: return location_match.group(1).strip()
     return 'Could not resolve redirect location.'
 
 def get_host_domain(location):
-    location_match = re.match('http[s*]:\/\/(.*)\/', location)
+    location_match = re.match('https*:\/\/(.*)\/', location)
     if location_match: return location_match.group(1).strip()
     return 'Could not resolve host url.'
 
@@ -46,11 +46,13 @@ def create_http_header():
 
 def main():
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(('facebook.com', 80))
+    client.connect(('youtube.com', 80))
 
     # TODO: Pull URL into host param
-    send_request(client, '/', 'facebook.com')
+    send_request(client, '/', 'youtube.com')
     response = recv_stream(client)
+    print('Initial response')
+    print(response)
     redirect_location = get_redirect_location(response)
     host = get_host_domain(redirect_location)
 
@@ -65,15 +67,16 @@ def main():
             break
         # Moved Permanently or Moved Temporarily (redirect)
         elif status_code == '301' or status_code == '302':
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             if requires_https(redirect_location):
-                print('In 301')
-                client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                print('requires https')
                 ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
-                ssl_client.connect(('facebook.com', 443))
+                ssl_client.connect((host, 443))
                 send_request(ssl_client, redirect_location, host)
                 response = recv_stream(ssl_client)
             else:
-                print('In 302')
+                print('does not require https')
+                client.connect((host, 80))
                 send_request(client, redirect_location, host)
                 response = recv_stream(client)
 
