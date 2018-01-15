@@ -44,54 +44,58 @@ def create_http_header():
 
 # TODO: parse URL from command-line arg(s)
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(('facebook.com', 80))
+def main():
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect(('facebook.com', 80))
 
-# TODO: Pull URL into host param
-send_request(client, '/', 'facebook.com')
-response = recv_stream(client)
-redirect_location = get_redirect_location(response)
-host = get_host_domain(redirect_location)
+    # TODO: Pull URL into host param
+    send_request(client, '/', 'facebook.com')
+    response = recv_stream(client)
+    redirect_location = get_redirect_location(response)
+    host = get_host_domain(redirect_location)
 
-while True:
-    status_code = get_status_code(response)
+    while True:
+        status_code = get_status_code(response)
 
-    # OK
-    if status_code == '200':
-        print('In 200')
-        print(response)
-        client.close()
-        break
-    # Moved Permanently or Moved Temporarily (redirect)
-    elif status_code == '301' or status_code == '302':
-        if requires_https(redirect_location):
-            print('In 301')
-            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
-            ssl_client.connect(('facebook.com', 443))
-            send_request(ssl_client, redirect_location, host)
-            response = recv_stream(ssl_client)
-        else:
-            print('In 302')
-            send_request(client, redirect_location, host)
-            response = recv_stream(client)
+        # OK
+        if status_code == '200':
+            print('In 200')
+            print(response)
+            client.close()
+            break
+        # Moved Permanently or Moved Temporarily (redirect)
+        elif status_code == '301' or status_code == '302':
+            if requires_https(redirect_location):
+                print('In 301')
+                client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
+                ssl_client.connect(('facebook.com', 443))
+                send_request(ssl_client, redirect_location, host)
+                response = recv_stream(ssl_client)
+            else:
+                print('In 302')
+                send_request(client, redirect_location, host)
+                response = recv_stream(client)
 
-        redirect_location = get_redirect_location(response)
-        host = get_host_domain(redirect_location)
-    # Bad Request
-    elif status_code == '400':
-        print(response)
-        break
-    # Unauthorized
-    elif status_code == '401': break
-    # Not found
-    elif status_code == '404': break
-    # Internal Server Error
-    elif status_code == '500': break
-    # Not Implemented
-    elif status_code == '501': break
-    # Bad Gateway
-    elif status_code == '502': break
-    # Service Unavailable
-    elif status_code == '503': break
-    else: break
+            redirect_location = get_redirect_location(response)
+            host = get_host_domain(redirect_location)
+        # Bad Request
+        elif status_code == '400':
+            print(response)
+            break
+        # Unauthorized
+        elif status_code == '401': break
+        # Not found
+        elif status_code == '404': break
+        # Internal Server Error
+        elif status_code == '500': break
+        # Not Implemented
+        elif status_code == '501': break
+        # Bad Gateway
+        elif status_code == '502': break
+        # Service Unavailable
+        elif status_code == '503': break
+        else: break
+
+if __name__ == '__main__':
+    main()
