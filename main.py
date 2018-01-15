@@ -25,6 +25,11 @@ def get_redirect_location(response_array):
         if location_pattern.match(string_partial):
             return string_partial[10:]
 
+def get_host_url(location):
+    location_match = re.match('http[s*]:\/\/(.*)', location)
+    if location_match: return location_match.group(1)
+    return 'Could not resolve host url.'
+
 def requires_https(redirect_location):
     if redirect_location.startswith('https'): return True
     else: return False
@@ -35,7 +40,7 @@ def send_request(socket, location, host):
     socket.send(('GET ' + location + ' HTTP/1.0\r\nHost: ' + host + '\r\n' + REQUEST_HEADER + '\r\n\r\n').encode('utf-8'))
 
 def get_status_code(status_line):
-    # Status codes can be found at /RFC1945#section-6.1.1
+    # Status codes can be found at https://tools.ietf.org/html/rfc1945#section-6.1.1
     status_code_match = re.match('HTTP\/\d\.\d (\d{3}).*', status_line)
     if status_code_match: return status_code_match.group(1)
     else: return 'No status code found.'
@@ -55,10 +60,6 @@ def handle_redirect(client, location, host):
         send_request(client, '/', host)
         response = recv_stream(client)
         # print(response)
-
-'''
-def parse_host():
-'''
 
 '''
 def create_http_header():
@@ -97,6 +98,7 @@ while True:
     elif status_code == '301' or status_code == '302':
         print('Testing 301 or 302...')
         handle_redirect(client, redirect_location, host)
+        print(get_host_url(redirect_location))
         break
     # Bad Request
     elif status_code == '400': break
