@@ -22,7 +22,7 @@ def parse_response(response):
 
 def get_redirect_location(response_array):
     for string in response_array:
-        # TODO: Full regex of location: http(s)://domain.com/
+        # TODO: Full regex of location: http(s)://domain.com/*
         if 'Location:' in string or 'location:' in string:
             return string[10:]
 
@@ -42,13 +42,29 @@ def get_status_code(status_line):
     if status_code_match: return status_code_match.group(1)
     else: return 'No status code found.'
 
-'''
-def create_http_header():
-    # GENERAL, REQUEST, then ENTITY
-'''
+def handle_redirect(client, location, host):
+    if requires_https(location):
+        # Requires use to open and close the socket?
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sslclient = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
+        sslclient.connect(('twitter.com', 443))
+        # Reference redirect_location in after GET method
+        # host: e.g. www.twitter.com or twitter.com
+        send_request(sslclient, '/', host)
+        response = recv_stream(sslclient)
+        # print(response)
+    else:
+        send_request(client, '/', host)
+        response = recv_stream(client)
+        # print(response)
 
 '''
 def parse_host():
+'''
+
+'''
+def create_http_header():
+    # GENERAL, REQUEST, then ENTITY
 '''
 
 # TODO: parse URL from command-line arg(s)
@@ -63,12 +79,16 @@ client.connect(('twitter.com', 80))
 
 # Pull URL into host param
 send_request(client, '/', 'twitter.com')
+response = recv_stream(client)
+print(response)
 
 while True:
-    response = recv_stream(client)
     parsed_response_array = parse_response(response)
+    print(parsed_response_array)
     redirect_location = get_redirect_location(parsed_response_array)
+    print(redirect_location)
     status_code = get_status_code(parsed_response_array[0])
+    host = 'twitter.com'
 
     # OK
     if status_code == '200':
@@ -78,8 +98,8 @@ while True:
     # Moved Permanently or Moved Temporarily (redirect)
     elif status_code == '301' or status_code == '302':
         print('Testing 301 or 302...')
+        handle_redirect(client, redirect_location, host)
         break
-        # handle_redirect(client, redirect_location, host)
     # Bad Request
     elif status_code == '400': break
     # Unauthorized
@@ -95,21 +115,3 @@ while True:
     # Service Unavailable
     elif status_code == '503': break
     else: break
-
-
-def handle_redirect(client, location, host):
-    if requires_https(location):
-        # Requires use to open and close the socket?
-        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sslclient = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
-        sslclient.connect(('twitter.com', 443))
-        # Reference redirect_location in after GET method
-        # host: e.g. www.twitter.com or twitter.com
-        send_request(sslclient, '/', host)
-        response = recv_stream(sslclient)
-        print(response)
-    else:
-        send_request(client, '/', host)
-        response = recv_stream(client)
-        print(response)
-        client.close()
