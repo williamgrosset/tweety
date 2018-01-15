@@ -10,11 +10,10 @@ ENTITY_HEADER = ''
 def recv_stream(socket):
     total_data = []
     while True:
-        # Handle decoding error?
-        data = socket.recv(8192).decode('utf-8')
+        data = socket.recv(8192)
         if not data: break
         total_data.append(data)
-    return ''.join(total_data).strip()
+    return b''.join(total_data).strip().decode('utf-8')
 
 def get_redirect_location(response):
     location_match = re.search('[L|l]ocation: (http.*)', response)
@@ -62,6 +61,7 @@ response = recv_stream(client)
 
 while True:
     status_code = get_status_code(response)
+    # TODO: Don't update these variables here
     redirect_location = get_redirect_location(response)
     print(redirect_location)
     host = get_host_domain(redirect_location)
