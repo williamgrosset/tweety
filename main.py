@@ -26,8 +26,7 @@ def get_redirect_location(response_array):
             return string_partial[10:]
 
 def requires_https(redirect_location):
-    # TODO: Check beginning of URL
-    if 'https' in redirect_location: return True
+    if redirect_location.startswith('https'): return True
     else: return False
 
 def send_request(socket, location, host):
