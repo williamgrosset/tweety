@@ -11,6 +11,7 @@
   + Sockets
   + SSL support
 + Close out all socket TCP connections? (`s.close()`)
++ Create cookie scanner helper
 
 Edge cases:
 + `400` Host-Header required

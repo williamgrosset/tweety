@@ -63,6 +63,7 @@ response = recv_stream(client)
 while True:
     status_code = get_status_code(response)
     redirect_location = get_redirect_location(response)
+    print(redirect_location)
     host = get_host_domain(redirect_location)
 
     # OK
@@ -75,12 +76,11 @@ while True:
     elif status_code == '301' or status_code == '302':
         if requires_https(redirect_location):
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sslclient = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
-            sslclient.connect(('twitter.com', 443))
-            send_request(sslclient, '/', host)
-            response = recv_stream(sslclient)
+            ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
+            ssl_client.connect(('twitter.com', 443))
+            send_request(ssl_client, '/', host)
+            response = recv_stream(ssl_client)
         else:
-            print('In 302')
             send_request(client, '/', host)
             response = recv_stream(client)
     # Bad Request
