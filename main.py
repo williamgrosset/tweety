@@ -16,7 +16,7 @@ def recv_stream(socket):
         total_data.append(data)
     return ''.join(total_data).strip()
 
-def parse_response(response):
+def split_response(response):
     return response.split('\r\n')
 
 def get_redirect_location(response_array):
@@ -82,7 +82,7 @@ response = recv_stream(client)
 print(response)
 
 while True:
-    parsed_response_array = parse_response(response)
+    parsed_response_array = split_response(response)
     print(parsed_response_array)
     redirect_location = get_redirect_location(parsed_response_array)
     print(redirect_location)
