@@ -5,7 +5,7 @@ import ssl
 import re
 
 GENERAL_HEADER = ''
-REQUEST_HEADER = 'User-Agent: ' + socket.gethostname() + '\r\nFrom: williamhgrosset@gmail.com'
+REQUEST_HEADER = 'User-Agent: ' + socket.gethostname() + '\n\nFrom: williamhgrosset@gmail.com'
 ENTITY_HEADER = 'Allow: GET'
 
 def recv_stream(socket):
@@ -64,7 +64,7 @@ def main():
     send_request(client, '/', url)
     response = recv_stream(client)
     print('Initial response')
-    # print(response)
+    print(response)
     redirect_location = get_redirect_location(response)
     host_url = get_host_domain(redirect_location)
     print(redirect_location)
@@ -75,19 +75,25 @@ def main():
         print('REDIRECT LOCATION:')
         print(redirect_location)
 
+        # Switching Protocols
+        if status_code == '100': break
         # OK
-        if status_code == '200':
+        elif status_code == '200':
             print('In 200')
             # print(response)
             # print(socket.gethostname())
             client.close()
             break
-        # Moved Permanently or Moved Temporarily (redirect)
-        elif status_code == '301' or status_code == '302':
+        # Switching Protocols
+        elif status_code == '202': break
+        # Multiple Chocies
+        # elif status_code == '300': break
+        # Moved Permanently or Found or See Other or Use Proxy
+        elif status_code == '301' or status_code == '302' or status_code == '300' or status_code == '305':
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             if requires_https(redirect_location):
                 print('requires https')
-                # print(response)
+                print(response)
                 ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
                 ssl_client.connect((host_url, 443))
                 print('Sending request...')
@@ -100,8 +106,11 @@ def main():
                 send_request(client, redirect_location, host_url)
                 response = recv_stream(client)
 
+            print('After https wrap')
             redirect_location = get_redirect_location(response)
             host_url = get_host_domain(redirect_location)
+            print(redirect_location)
+            print(host_url)
         # Bad Request
         elif status_code == '400':
             print('In 400')
@@ -111,8 +120,6 @@ def main():
         elif status_code == '401': break
         # Not found
         elif status_code == '404': break
-        # Upgrade Required
-        elif status_code == '426': break
         # Internal Server Error
         elif status_code == '500': break
         # Not Implemented
@@ -121,7 +128,14 @@ def main():
         elif status_code == '502': break
         # Service Unavailable
         elif status_code == '503': break
-        else: break
+        # Gateway Time-out
+        elif status_code == '504': break
+        # HTTP Version not supported
+        elif status_code == '505': break
+        else:
+            print('An unsupported status code has occurred. Please try again.')
+            break
+
 
 if __name__ == '__main__':
     main()
