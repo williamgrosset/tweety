@@ -48,7 +48,7 @@ def create_http_header():
 
 def get_url_from_input(args):
     if (len(args) != 2): print('Enter the correct amount of arguments.')
-    url_match = re.match('[www\.]*(.*)', args[1])
+    url_match = re.match('[www\.]*([a-zA-Z0-9\.]*)', args[1])
     if url_match: return url_match.group(1).strip()
     return 'Please enter a valid url.'
 
@@ -71,6 +71,8 @@ def main():
 
     while True:
         status_code = get_status_code(response)
+        print('REDIRECT LOCATION:')
+        print(redirect_location)
 
         # OK
         if status_code == '200':
