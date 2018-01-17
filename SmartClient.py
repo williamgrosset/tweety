@@ -5,8 +5,8 @@ import ssl
 import re
 
 GENERAL_HEADER = ''
-REQUEST_HEADER = 'From: williamhgrosset@gmail.com'
-ENTITY_HEADER = ''
+REQUEST_HEADER = 'User-Agent: ' + socket.gethostname() + '\r\nFrom: williamhgrosset@gmail.com'
+ENTITY_HEADER = 'Allow: GET'
 
 def recv_stream(socket):
     total_data = []
@@ -31,9 +31,9 @@ def requires_https(location):
     return False
 
 def send_request(socket, location, host):
-    # TODO: Define HTTP 1.0 spec using BNF format
+    # TODO: Define HTTP 1.1 spec using BNF format
     # TODO: Test with HTTP/2.0 servers (see announcement)
-    socket.send(('GET ' + location + ' HTTP/1.0\r\nHost: ' + host + '\r\n' + REQUEST_HEADER + '\r\n\r\n').encode('utf-8'))
+    socket.send(('GET ' + location + ' HTTP/1.1\r\nHost: ' + host + '\n\n' + REQUEST_HEADER + '\r\n' + ENTITY_HEADER + '\r\n\r\n').encode('utf-8'))
 
 def get_status_code(response):
     # Status codes can be found at https://tools.ietf.org/html/rfc1945#section-6.1.1
@@ -42,8 +42,7 @@ def get_status_code(response):
     return 'No status code found.'
 
 '''
-def create_http_header():
-    # GENERAL, REQUEST, then ENTITY
+def upgrade_protocol(version):
 '''
 
 def get_url_from_input(args):
@@ -65,9 +64,11 @@ def main():
     send_request(client, '/', url)
     response = recv_stream(client)
     print('Initial response')
-    print(response)
+    # print(response)
     redirect_location = get_redirect_location(response)
     host_url = get_host_domain(redirect_location)
+    print(redirect_location)
+    print(host_url)
 
     while True:
         status_code = get_status_code(response)
@@ -77,7 +78,8 @@ def main():
         # OK
         if status_code == '200':
             print('In 200')
-            print(response)
+            # print(response)
+            # print(socket.gethostname())
             client.close()
             break
         # Moved Permanently or Moved Temporarily (redirect)
@@ -85,10 +87,13 @@ def main():
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             if requires_https(redirect_location):
                 print('requires https')
+                # print(response)
                 ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
                 ssl_client.connect((host_url, 443))
+                print('Sending request...')
                 send_request(ssl_client, redirect_location, host_url)
                 response = recv_stream(ssl_client)
+                # print(response)
             else:
                 print('does not require https')
                 client.connect((host_url, 80))
@@ -99,7 +104,8 @@ def main():
             host_url = get_host_domain(redirect_location)
         # Bad Request
         elif status_code == '400':
-            print(response)
+            print('In 400')
+            # print(response)
             break
         # Unauthorized
         elif status_code == '401': break
