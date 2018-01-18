@@ -14,7 +14,7 @@ def recv_stream(socket):
         data = socket.recv(8192)
         if not data: break
         total_data.append(data)
-    return b''.join(total_data).strip().decode('utf-8')
+    return b''.join(total_data).strip().decode('utf-8', 'ignore')
 
 def get_redirect_location(response):
     location_match = re.search('[L|l]ocation: (https*:\/\/[a-zA-Z0-9_\.\/]+).*', response)
@@ -33,7 +33,7 @@ def requires_https(location):
 def send_request(socket, location, host):
     # TODO: Define HTTP 1.1 spec using BNF format
     # TODO: Test with HTTP/2.0 servers (see announcement)
-    socket.send(('GET ' + location + ' HTTP/1.1\r\nHost: ' + host + '\n\n' + REQUEST_HEADER + '\r\n' + ENTITY_HEADER + '\r\n\r\n').encode('utf-8'))
+    socket.send(('GET ' + location + ' HTTP/1.1\r\nHost: ' + host + '\r\n' + REQUEST_HEADER + '\r\n' + ENTITY_HEADER + '\r\n\r\n').encode('utf-8'))
 
 def get_status_code(response):
     # Status codes can be found at https://tools.ietf.org/html/rfc1945#section-6.1.1
@@ -47,7 +47,7 @@ def upgrade_protocol(version):
 
 def get_url_from_input(args):
     if (len(args) != 2): print('Enter the correct amount of arguments.')
-    url_match = re.match('[www\.]*([a-zA-Z0-9\.]*)', args[1])
+    url_match = re.match('(www\.[a-zA-Z0-9\.]*)', args[1])
     if url_match: return url_match.group(1).strip()
     return 'Please enter a valid url.'
 
@@ -65,6 +65,7 @@ def main():
     response = recv_stream(client)
     print('Initial response')
     print(response)
+    print('END OF BEGINNING RESPONSE')
     redirect_location = get_redirect_location(response)
     host_url = get_host_domain(redirect_location)
     print(redirect_location)
@@ -72,16 +73,13 @@ def main():
 
     while True:
         status_code = get_status_code(response)
-        print('REDIRECT LOCATION:')
-        print(redirect_location)
 
         # Switching Protocols
         if status_code == '100': break
         # OK
         elif status_code == '200':
             print('In 200')
-            # print(response)
-            # print(socket.gethostname())
+            print(response)
             client.close()
             break
         # Switching Protocols
@@ -90,31 +88,26 @@ def main():
         # elif status_code == '300': break
         # Moved Permanently or Found or See Other or Use Proxy
         elif status_code == '301' or status_code == '302' or status_code == '300' or status_code == '305':
+            print('In ' + status_code)
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             if requires_https(redirect_location):
                 print('requires https')
-                print(response)
                 ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
                 ssl_client.connect((host_url, 443))
-                print('Sending request...')
+                print('Sending TLS request...')
                 send_request(ssl_client, redirect_location, host_url)
                 response = recv_stream(ssl_client)
-                # print(response)
             else:
                 print('does not require https')
                 client.connect((host_url, 80))
                 send_request(client, redirect_location, host_url)
                 response = recv_stream(client)
 
-            print('After https wrap')
             redirect_location = get_redirect_location(response)
             host_url = get_host_domain(redirect_location)
-            print(redirect_location)
-            print(host_url)
         # Bad Request
         elif status_code == '400':
             print('In 400')
-            # print(response)
             break
         # Unauthorized
         elif status_code == '401': break
