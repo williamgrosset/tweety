@@ -3,10 +3,16 @@ import sys
 import socket
 import ssl
 import re
+import cookie_helper
 
 # GENERAL_HEADER = ''
 # REQUEST_HEADER = 'User-Agent: ' + socket.gethostname() + '\n\n'
 # ENTITY_HEADER = 'Allow: GET'
+
+def send_request(socket, location, host):
+    # TODO: Define HTTP 1.1 spec using BNF format
+    # TODO: Test with HTTP/2.0 servers (see announcement)
+    socket.sendall(('GET ' + location + ' HTTP/1.1\r\nHost: ' + host + '\r\nConnection: close' + '\r\n\r\n').encode('utf-8'))
 
 def recv_stream(socket):
     total_data = []
@@ -16,6 +22,17 @@ def recv_stream(socket):
         total_data.append(data)
         # Added 'ignore' for issues with www.google.com
     return b''.join(total_data).strip().decode('utf-8', 'ignore')
+
+def requires_https(location):
+    if location.startswith('https'): return True
+    return False
+
+def get_url_from_args(args):
+    if (len(args) != 2): print('Enter the correct amount of arguments.')
+    # TODO: Stricter regex
+    url_match = re.match('([www\.a-zA-Z0-9\.]*)', args[1])
+    if url_match: return url_match.group(1).strip()
+    return ''
 
 def get_redirect_location(response):
     location_match = re.search('[L|l]ocation: (https*:\/\/[a-zA-Z0-9_\.\/]+).*', response)
@@ -27,27 +44,11 @@ def get_host_url(location):
     if location_match: return location_match.group(1).strip()
     return 'Could not resolve host url.'
 
-def requires_https(location):
-    if location.startswith('https'): return True
-    return False
-
-def send_request(socket, location, host):
-    # TODO: Define HTTP 1.1 spec using BNF format
-    # TODO: Test with HTTP/2.0 servers (see announcement)
-    socket.sendall(('GET ' + location + ' HTTP/1.1\r\nHost: ' + host + '\r\nConnection: close' + '\r\n\r\n').encode('utf-8'))
-
 def get_status_code(response):
     # Status codes can be found at https://tools.ietf.org/html/rfc2616#section-6.1.1
     status_code_match = re.search('HTTP\/\d\.\d (\d{3}).*', response)
     if status_code_match: return status_code_match.group(1)
     return 'No status code found.'
-
-def get_url_from_args(args):
-    if (len(args) != 2): print('Enter the correct amount of arguments.')
-    # TODO: Stricter regex
-    url_match = re.match('([www\.a-zA-Z0-9\.]*)', args[1])
-    if url_match: return url_match.group(1).strip()
-    return ''
 
 '''
 def upgrade_protocol(version):
@@ -90,10 +91,8 @@ def main():
                 print('requires https')
                 ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
                 ssl_client.connect((url, 443))
-                print('Sending TLS request...')
                 send_request(ssl_client, redirect_location, url)
                 response = recv_stream(ssl_client)
-                # print(response)
             else:
                 print('does not require https')
                 client.connect((url, 80))
@@ -111,7 +110,7 @@ def main():
         # HTTP Version not supported
         elif status_code == '505': break
         else:
-            print('An unsupported status code has occurred.')
+            print('An unsupported status code has occurred: ' + status_code)
             break
 
     ssl_client.close()
