@@ -34,7 +34,7 @@ def requires_https(location):
 def send_request(socket, location, host):
     # TODO: Define HTTP 1.1 spec using BNF format
     # TODO: Test with HTTP/2.0 servers (see announcement)
-    socket.sendall(('GET ' + location + ' HTTP/1.1\r\nHost: ' + host + '\r\n\r\n').encode('utf-8'))
+    socket.sendall(('GET ' + location + ' HTTP/1.1\r\nHost: ' + host + '\r\nConnection: close' + '\r\n\r\n').encode('utf-8'))
 
 def get_status_code(response):
     # Status codes can be found at https://tools.ietf.org/html/rfc1945#section-6.1.1
