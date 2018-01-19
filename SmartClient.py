@@ -12,7 +12,7 @@ import cookie_helper
 def send_request(socket, location, host):
     # TODO: Define HTTP 1.1 spec using BNF format
     # TODO: Test with HTTP/2.0 servers (see announcement)
-    socket.sendall(('GET ' + location + ' HTTP/1.1\r\nHost: ' + host + '\r\nConnection: close' + '\r\n\r\n').encode('utf-8'))
+    socket.sendall(('HEAD ' + location + ' HTTP/1.1\r\nHost: ' + host + '\r\nConnection: close' + '\r\n\r\n').encode('utf-8'))
 
 def recv_stream(socket):
     total_data = []
@@ -80,8 +80,9 @@ def main():
         # OK
         elif status_code == '200':
             print('In 200')
-            # print(response)
-            client.close()
+            print(response)
+            print('COOKIES')
+            cookie_helper.get_cookies(response)
             break
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':
@@ -99,6 +100,8 @@ def main():
                 send_request(client, redirect_location, url)
                 response = recv_stream(client)
 
+            # TODO: Verify that we won't get stuck in a 301/302
+            # loop, ensure were parsing correctly
             redirect_location = get_redirect_location(response)
             url = get_host_url(redirect_location)
         # Bad Request
