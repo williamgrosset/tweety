@@ -37,31 +37,31 @@ def send_request(socket, location, host):
     socket.sendall(('GET ' + location + ' HTTP/1.1\r\nHost: ' + host + '\r\nConnection: close' + '\r\n\r\n').encode('utf-8'))
 
 def get_status_code(response):
-    # Status codes can be found at https://tools.ietf.org/html/rfc1945#section-6.1.1
+    # Status codes can be found at https://tools.ietf.org/html/rfc2616#section-6.1.1
     status_code_match = re.search('HTTP\/\d\.\d (\d{3}).*', response)
     if status_code_match: return status_code_match.group(1)
     return 'No status code found.'
+
+def get_url_from_args(args):
+    if (len(args) != 2): print('Enter the correct amount of arguments.')
+    # TODO: Stricter regex
+    url_match = re.match('([www\.a-zA-Z0-9\.]*)', args[1])
+    if url_match: return url_match.group(1).strip()
+    return ''
 
 '''
 def upgrade_protocol(version):
 '''
 
-def get_url_from_args(args):
-    if (len(args) != 2): print('Enter the correct amount of arguments.')
-    url_match = re.match('([www\.a-zA-Z0-9\.]*)', args[1])
-    if url_match: return url_match.group(1).strip()
-    return ''
-
-
 def main():
     url = get_url_from_args(sys.argv)
-    print(url)
     if url == '':
         print('Please enter a valid url')
         return
 
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
+
     ssl_client.connect((url, 443))
     send_request(ssl_client, '/', url)
     response = recv_stream(ssl_client)
@@ -82,12 +82,8 @@ def main():
             # print(response)
             client.close()
             break
-        # Switching Protocols
-        elif status_code == '202': break
-        # Multiple Chocies
-        # elif status_code == '300': break
-        # Moved Permanently or Found or See Other or Use Proxy
-        elif status_code == '300' or status_code == '301' or status_code == '302' or status_code == '305':
+        # Moved Permanently or Found
+        elif status_code == '301' or status_code == '302':
             print('In ' + status_code)
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             if requires_https(redirect_location):
@@ -110,25 +106,16 @@ def main():
         elif status_code == '400':
             print('In 400')
             break
-        # Unauthorized
-        elif status_code == '401': break
         # Not found
         elif status_code == '404': break
-        # Internal Server Error
-        elif status_code == '500': break
-        # Not Implemented
-        elif status_code == '501': break
-        # Bad Gateway
-        elif status_code == '502': break
-        # Service Unavailable
-        elif status_code == '503': break
-        # Gateway Time-out
-        elif status_code == '504': break
         # HTTP Version not supported
         elif status_code == '505': break
         else:
-            print('An unsupported status code has occurred. Please try again.')
+            print('An unsupported status code has occurred.')
             break
+
+    ssl_client.close()
+    client.close()
 
 
 if __name__ == '__main__':
