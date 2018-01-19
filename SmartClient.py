@@ -59,20 +59,19 @@ def main():
     # if not valid url: return
 
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect((url, 80))
-
+    ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
+    ssl_client.connect((url, 443))
+    print('Sending TLS request...')
     # TODO: Pull URL into host param
-    send_request(client, '/', url)
-    response = recv_stream(client)
+    send_request(ssl_client, '/', url)
+    response = recv_stream(ssl_client)
     print('Initial response')
     print(response)
     print('END OF BEGINNING RESPONSE')
     redirect_location = get_redirect_location(response)
     host_url = get_host_domain(redirect_location) or url
-    print(redirect_location)
-    print(host_url)
 
-    while False:
+    while True:
         status_code = get_status_code(response)
 
         # Switching Protocols
@@ -80,7 +79,7 @@ def main():
         # OK
         elif status_code == '200':
             print('In 200')
-            print(response)
+            # print(response)
             client.close()
             break
         # Switching Protocols
@@ -93,8 +92,6 @@ def main():
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             if requires_https(redirect_location):
                 print('requires https')
-                print(redirect_location)
-                print(host_url)
                 ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
                 ssl_client.connect((host_url, 443))
                 print('Sending TLS request...')
