@@ -22,7 +22,7 @@ def get_redirect_location(response):
     if location_match: return location_match.group(1).strip()
     return 'Could not resolve redirect location.'
 
-def get_host_domain(location):
+def get_host_url(location):
     location_match = re.match('https*:\/\/(.*)\/', location)
     if location_match: return location_match.group(1).strip()
     return 'Could not resolve host url.'
@@ -46,30 +46,30 @@ def get_status_code(response):
 def upgrade_protocol(version):
 '''
 
-def get_url_from_input(args):
+def get_url_from_args(args):
     if (len(args) != 2): print('Enter the correct amount of arguments.')
     url_match = re.match('([www\.a-zA-Z0-9\.]*)', args[1])
     if url_match: return url_match.group(1).strip()
-    return 'Please enter a valid url.'
+    return ''
 
 
 def main():
-    url = get_url_from_input(sys.argv)
+    url = get_url_from_args(sys.argv)
     print(url)
-    # if not valid url: return
+    if url == '':
+        print('Please enter a valid url')
+        return
 
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
     ssl_client.connect((url, 443))
-    print('Sending TLS request...')
-    # TODO: Pull URL into host param
     send_request(ssl_client, '/', url)
     response = recv_stream(ssl_client)
     print('Initial response')
     print(response)
     print('END OF BEGINNING RESPONSE')
     redirect_location = get_redirect_location(response)
-    host_url = get_host_domain(redirect_location) or url
+    url = get_host_url(redirect_location)
 
     while True:
         status_code = get_status_code(response)
@@ -93,19 +93,19 @@ def main():
             if requires_https(redirect_location):
                 print('requires https')
                 ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
-                ssl_client.connect((host_url, 443))
+                ssl_client.connect((url, 443))
                 print('Sending TLS request...')
-                send_request(ssl_client, redirect_location, host_url)
+                send_request(ssl_client, redirect_location, url)
                 response = recv_stream(ssl_client)
                 # print(response)
             else:
                 print('does not require https')
-                client.connect((host_url, 80))
-                send_request(client, redirect_location, host_url)
+                client.connect((url, 80))
+                send_request(client, redirect_location, url)
                 response = recv_stream(client)
 
             redirect_location = get_redirect_location(response)
-            host_url = get_host_domain(redirect_location)
+            url = get_host_url(redirect_location)
         # Bad Request
         elif status_code == '400':
             print('In 400')
