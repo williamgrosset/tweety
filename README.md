@@ -13,9 +13,11 @@
   + SSL support
 + Close out all socket TCP connections? (`s.close()`)
 + Create cookie scanner helper
-+ String parser helper
-+ Generated `__pycache__`?
++ Reseach ways to grab all possible cookies
++ Output parser helper
 + Switching between protocols (test with both HTTP/1.1 and HTTP/2.0)
+  + Identify highest supported HTTP version
++ Clean-up `Smartclient.py`
 
 Edge cases:
 + `400` Host-Header required
