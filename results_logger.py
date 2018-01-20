@@ -16,13 +16,14 @@ def print_cookies(cookies):
     domain_name = ''
 
     for cookie in cookies:
+        # TODO: Stricter regex
         name_match = re.match('name=(.*)', cookie)
         key_match = re.search('^\w*', cookie)
         domain_name_match = re.match('.*domain=(.*)', cookie)
 
-        if name_match: name = name_match.group(0)
+        if name_match: name = name_match.group(1)
         if key_match: key = key_match.group(0)
-        if domain_name_match: domain_name = domain_name_match.group(0)
+        if domain_name_match: domain_name = domain_name_match.group(1)
 
         print('name: ' + name + ', key: ' + key + ', domain name: ' + domain_name)
 
