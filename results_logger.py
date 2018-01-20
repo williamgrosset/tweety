@@ -11,17 +11,20 @@ def print_newest_http_version(http_version):
 
 def print_cookies(cookies):
     print('3. List of cookies:')
-    print(cookies)
+    name = '-'
+    key = ''
+    domain_name = ''
+
     for cookie in cookies:
-        name = '-'
-        key = ''
-        domain_name = ''
+        name_match = re.match('name=(.*)', cookie)
+        key_match = re.search('^\w*', cookie)
+        domain_name_match = re.match('.*domain=(.*)', cookie)
 
-        name_match = re.search('name=(.*)[\r]', cookie)
-        key_match = re.search('(.*);', cookie)
-        domain_name_match = re.search('domain=(.*)[\r]', cookie)
+        if name_match: name = name_match.group(0)
+        if key_match: key = key_match.group(0)
+        if domain_name_match: domain_name = domain_name_match.group(0)
 
-        print(name + ', ' + key + ', ' + domain_name)
+        print('name: ' + name + ', key: ' + key + ', domain name: ' + domain_name)
 
 def print_results():
     print_website(url)
