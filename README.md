@@ -19,11 +19,12 @@
   + Cookies
   + URLs/URIs
   + Disclaimer
-+ Close out all socket TCP connections? (`s.close()`)
++ Clean-up `Smartclient.py`
+  + Reference all variables w/o string concatenation
+  + Close out all socket TCP connections? (`s.close()`)
 + Output parser helper
-+ Create cookie scanner helper
-+ Reseach ways to grab all possible cookies (e.g Google analytic cookies?)
 + Switching between protocols (test with both HTTP/1.1 and HTTP/2.0)
   + Identify highest supported HTTP version
-+ Clean-up `Smartclient.py`
-+ Reference all variables w/o string concatenation
++ Create cookie scanner helper
+  + Reseach ways to grab all possible cookies (e.g Google analytic cookies?)
++ Close out all socket TCP connections? (`s.close()`)

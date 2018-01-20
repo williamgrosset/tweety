@@ -11,9 +11,7 @@ def print_newest_http_version(http_version):
 
 def print_cookies(cookies):
     print('3. List of cookies:')
-    name = '-'
-    key = ''
-    domain_name = ''
+    name = key = domain_name = '-'
 
     for cookie in cookies:
         # TODO: Stricter regex
