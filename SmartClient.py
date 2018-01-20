@@ -4,7 +4,7 @@ import socket
 import ssl
 import re
 import cookie_helper
-import results_helper
+import results_logger
 
 # GENERAL_HEADER = ''
 # REQUEST_HEADER = 'User-Agent: ' + socket.gethostname() + '\n\n'
@@ -83,7 +83,7 @@ def main():
             print('In 200')
             print(response)
             print('COOKIES')
-            cookie_helper.get_cookies(response)
+            results_logger.print_cookies(cookie_helper.get_cookies(response))
             break
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':

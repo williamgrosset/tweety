@@ -1,3 +1,5 @@
+import re
+
 def print_website(url):
     print('website: ' + url)
 
@@ -9,6 +11,17 @@ def print_newest_http_version(http_version):
 
 def print_cookies(cookies):
     print('3. List of cookies:')
+    print(cookies)
+    for cookie in cookies:
+        name = '-'
+        key = ''
+        domain_name = ''
+
+        name_match = re.search('name=(.*)[\r]', cookie)
+        key_match = re.search('(.*);', cookie)
+        domain_name_match = re.search('domain=(.*)[\r]', cookie)
+
+        print(name + ', ' + key + ', ' + domain_name)
 
 def print_results():
     print_website(url)

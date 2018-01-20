@@ -26,3 +26,4 @@
 + Switching between protocols (test with both HTTP/1.1 and HTTP/2.0)
   + Identify highest supported HTTP version
 + Clean-up `Smartclient.py`
++ Reference all variables w/o string concatenation
