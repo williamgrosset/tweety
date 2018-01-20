@@ -4,7 +4,7 @@ import socket
 import ssl
 import re
 import cookie_helper
-import final_results
+import results_helper
 
 # GENERAL_HEADER = ''
 # REQUEST_HEADER = 'User-Agent: ' + socket.gethostname() + '\n\n'
