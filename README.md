@@ -1,5 +1,5 @@
-# wreck
-:bird: A basic web client to communicate with a server via sockets.
+# tweety
+:bird: A barebone HTTP client built directly using sockets.
 
 ## Notes:
 + [HTTP/1.0 RFC1945](https://tools.ietf.org/html/rfc1945)
@@ -7,17 +7,22 @@
 + [HTTP/2.0 RFC7540](https://tools.ietf.org/html/rfc7540)
 
 ## TODO
-+ Section descriptions:
++ `README.md` section descriptions:
+  + `.gif` demo
+  + Project description
+  + Assignment description
+  + Command-line API
+  + Console output
   + HTTP Protocol w/ TCP connection
-  + Sockets
   + SSL support
+  + Sockets (Client and server — pseudo-code for both)
+  + Cookies
+  + URLs/URIs
+  + Disclaimer
 + Close out all socket TCP connections? (`s.close()`)
-+ Create cookie scanner helper
-+ Reseach ways to grab all possible cookies
 + Output parser helper
++ Create cookie scanner helper
++ Reseach ways to grab all possible cookies (e.g Google analytic cookies?)
 + Switching between protocols (test with both HTTP/1.1 and HTTP/2.0)
   + Identify highest supported HTTP version
 + Clean-up `Smartclient.py`
-
-Edge cases:
-+ `400` Host-Header required
