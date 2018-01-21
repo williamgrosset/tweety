@@ -17,11 +17,15 @@ def send_request(socket, location, host):
         'Connection: close')
     REQUEST_HEADER = (
         'Host: ' + host + '\r\n'
-        'User-Agent: Macbook Pro\r\n'
+        # Google Chrome
+        'User-Agent: Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11\r\n'
         'From: williamhgrosset@gmail.com')
-    ENTITY_HEADER = ''
+    PAYLOAD = (
+        'HEAD ' + location + ' HTTP/1.1\r\n' +
+        GENERAL_HEADER + '\r\n' +
+        REQUEST_HEADER + '\r\n\r\n')
 
-    socket.sendall(('HEAD ' + location + ' HTTP/1.1\r\n' + GENERAL_HEADER + '\r\n' + REQUEST_HEADER + '\r\n\r\n').encode('utf-8'))
+    socket.sendall(PAYLOAD.encode('utf-8'))
 
 def recv_stream(socket):
     total_data = []
