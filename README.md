@@ -23,6 +23,7 @@
   + Reference all variables w/o string concatenation
   + Close out all socket TCP connections? (`s.close()`)
   + Create full HTTP header
+  + Python linting module (add reference in README)
 + Test out 10 URLs
 + Output parser helper
 + Switching between protocols (test with both HTTP/1.1 and HTTP/2.0)

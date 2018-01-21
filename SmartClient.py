@@ -13,15 +13,19 @@ def send_request(socket, location, host):
     #               | entity-header ) CRLF)
     #              CRLF
     # General Header: Possibly add Upgrade field for 101 (Switching Protocols) response
+    REQUEST_LINE = (
+        'HEAD ' +
+        location +
+        ' HTTP/1.1')
     GENERAL_HEADER = (
         'Connection: close')
     REQUEST_HEADER = (
         'Host: ' + host + '\r\n'
-        # Google Chrome
+        # Google Chrome mock
         'User-Agent: Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11\r\n'
         'From: williamhgrosset@gmail.com')
     PAYLOAD = (
-        'HEAD ' + location + ' HTTP/1.1\r\n' +
+        REQUEST_LINE + '\r\n' +
         GENERAL_HEADER + '\r\n' +
         REQUEST_HEADER + '\r\n\r\n')
 
@@ -43,17 +47,17 @@ def requires_https(location):
 def get_url_from_args(args):
     if (len(args) != 2): print('Enter the correct amount of arguments.')
     # TODO: Stricter regex
-    url_match = re.match('([www\.a-zA-Z0-9\.]*)', args[1])
+    url_match = re.match('([www\.a-zA-Z0-9\.]*)', args[1], re.IGNORECASE)
     if url_match: return url_match.group(1).strip()
     return ''
 
 def get_redirect_location(response):
-    location_match = re.search('[L|l]ocation: (https*:\/\/[a-zA-Z0-9_\.\/]+).*', response)
+    location_match = re.search('Location: (https*:\/\/[a-zA-Z0-9_\.\/]+).*', response, re.IGNORECASE)
     if location_match: return location_match.group(1).strip()
     return 'Could not resolve redirect location.'
 
 def get_host_url(location):
-    location_match = re.match('https*:\/\/(.*)\/', location)
+    location_match = re.match('https*:\/\/(.*)\/', location, re.IGNORECASE)
     if location_match: return location_match.group(1).strip()
     return 'Could not resolve host url.'
 
