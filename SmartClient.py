@@ -7,12 +7,12 @@ import cookie_helper
 import results_logger
 
 def send_request(socket, location, host):
-    # HTTP 1.1 (BNF) (https://tools.ietf.org/html/rfc2616#section-5)
+    # HTTP 1.1 (BNF grammar) (https://tools.ietf.org/html/rfc2616#section-5)
     # Request-Line *(( general-header
     #               | request-header
     #               | entity-header ) CRLF)
     #              CRLF
-    # General Header: Possibly add Upgrade field for 101 (Switching Protocols) response
+    # TODO: General Header: Possibly add Upgrade field for 101 (Switching Protocols) response
     REQUEST_LINE = (
         'HEAD ' +
         location +
@@ -47,17 +47,17 @@ def requires_https(location):
 def get_url_from_args(args):
     if (len(args) != 2): print('Enter the correct amount of arguments.')
     # TODO: Stricter regex
-    url_match = re.match('([www\.a-zA-Z0-9\.]*)', args[1], re.IGNORECASE)
+    url_match = re.match('([a-zA-Z0-9\.]*)', args[1], re.IGNORECASE)
     if url_match: return url_match.group(1).strip()
     return ''
 
 def get_redirect_location(response):
-    location_match = re.search('Location: (https*:\/\/[a-zA-Z0-9_\.\/]+).*', response, re.IGNORECASE)
+    location_match = re.search('Location: (http[s?]*:\/\/[a-zA-Z0-9_\.\/]+).*', response, re.IGNORECASE)
     if location_match: return location_match.group(1).strip()
     return 'Could not resolve redirect location.'
 
 def get_host_url(location):
-    location_match = re.match('https*:\/\/(.*)\/', location, re.IGNORECASE)
+    location_match = re.match('http[s?]*:\/\/(.*)\/', location, re.IGNORECASE)
     if location_match: return location_match.group(1).strip()
     return 'Could not resolve host url.'
 
