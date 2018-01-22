@@ -14,7 +14,7 @@ def send_request(socket, location, host):
     #              CRLF
     # TODO: General Header: Possibly add Upgrade field for 101 (Switching Protocols) response
     REQUEST_LINE = (
-        'HEAD ' +
+        'GET ' +
         location +
         ' HTTP/1.1')
     GENERAL_HEADER = (
@@ -74,6 +74,7 @@ def upgrade_protocol(version):
 
 def main():
     url = get_url_from_args(sys.argv)
+    # TODO: Fix regex
     if url == '':
         print('Please enter a valid url.')
         return
@@ -85,7 +86,7 @@ def main():
     send_request(ssl_client, '/', url)
     response = recv_stream(ssl_client)
     print('Initial response')
-    print(response)
+    # print(response)
     print('END OF BEGINNING RESPONSE')
     redirect_location = get_redirect_location(response)
     url = get_host_url(redirect_location)
@@ -98,9 +99,10 @@ def main():
         # OK
         elif status_code == '200':
             print('In 200')
-            print(response)
+            # print(response)
             print('COOKIES')
-            results_logger.print_cookies(cookie_helper.get_cookies(response))
+            cookies = cookie_helper.get_cookies(response)
+            if cookies: results_logger.print_cookies(cookies)
             break
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':
