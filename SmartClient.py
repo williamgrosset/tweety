@@ -5,6 +5,7 @@ import ssl
 import re
 import cookie_helper
 import results_logger
+import http2_negotiation
 
 def send_request(socket, location, host):
     # HTTP 1.1 (BNF grammar) (https://tools.ietf.org/html/rfc2616#section-5)
@@ -79,6 +80,8 @@ def main():
         print('Please enter a valid url.')
         return
 
+    print(http2_negotiation.supports_http2(url))
+
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
 
@@ -86,7 +89,7 @@ def main():
     send_request(ssl_client, '/', url)
     response = recv_stream(ssl_client)
     print('Initial response')
-    # print(response)
+    print(response)
     print('END OF BEGINNING RESPONSE')
     redirect_location = get_redirect_location(response)
     url = get_host_url(redirect_location)
