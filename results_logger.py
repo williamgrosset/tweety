@@ -17,7 +17,7 @@ def print_cookies(cookies):
         # TODO: Stricter regex
         name_match = re.match('name=(.*)', cookie)
         key_match = re.search('^\w*', cookie)
-        domain_name_match = re.match('.*domain=(.*)', cookie)
+        domain_name_match = re.match('.*domain=([\w\.-]*)', cookie)
 
         if name_match: name = name_match.group(1)
         if key_match: key = key_match.group(0)

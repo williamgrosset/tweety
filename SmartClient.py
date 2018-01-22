@@ -47,17 +47,18 @@ def requires_https(location):
 def get_url_from_args(args):
     if (len(args) != 2): print('Enter the correct amount of arguments.')
     # TODO: Stricter regex
-    url_match = re.match('([a-zA-Z0-9\.]*)', args[1], re.IGNORECASE)
+    # Valid input: www.domain.com or domain.com
+    url_match = re.match('([www\.]?[\w\.-]*)', args[1], re.IGNORECASE)
     if url_match: return url_match.group(1).strip()
     return ''
 
 def get_redirect_location(response):
-    location_match = re.search('Location: (http[s?]*:\/\/[a-zA-Z0-9_\.\/]+).*', response, re.IGNORECASE)
+    location_match = re.search('Location: (http[s?]*:\/\/[\w\.-\/]+).*', response, re.IGNORECASE)
     if location_match: return location_match.group(1).strip()
     return 'Could not resolve redirect location.'
 
 def get_host_url(location):
-    location_match = re.match('http[s?]*:\/\/(.*)\/', location, re.IGNORECASE)
+    location_match = re.match('http[s?]*:\/\/([\w\.-]*)\/', location, re.IGNORECASE)
     if location_match: return location_match.group(1).strip()
     return 'Could not resolve host url.'
 
@@ -74,7 +75,7 @@ def upgrade_protocol(version):
 def main():
     url = get_url_from_args(sys.argv)
     if url == '':
-        print('Please enter a valid url')
+        print('Please enter a valid url.')
         return
 
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
