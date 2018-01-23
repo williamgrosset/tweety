@@ -5,7 +5,7 @@ import ssl
 import re
 from lib.cookie_parser import get_cookies
 from lib.results_logger import print_results
-from lib.http2_negotiation import check_http2_support
+from lib.http2_negotiation import allows_http2
 
 def send_request(socket, location, host):
     # HTTP 1.1 (BNF grammar) (https://tools.ietf.org/html/rfc2616#section-5)
@@ -101,7 +101,7 @@ def main():
             if cookies: 
                 # TODO: Fix supports_https
                 supports_https = requires_https(redirect_location)
-                supports_http2 = check_http2_support(input_url)
+                supports_http2 = allows_http2(input_url)
 
                 print_results(
                     input_url,
