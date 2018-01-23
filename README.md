@@ -21,6 +21,7 @@
   + Disclaimer
 + Clean-up `Smartclient.py`
   + Python linting module (add reference in README)
++ Error-handling for unknown hostnames
 + Test out 10 URLs
 + Output parser helper
 + Switching between protocols (test with both HTTP/1.1 and HTTP/2.0)

@@ -21,7 +21,7 @@ def send_request(socket, location, host):
     GENERAL_HEADER = (
         'Connection: close')
     REQUEST_HEADER = (
-        'Host: %s ' % host + '\r\n'
+        'Host: ' + host + '\r\n'
         # Google Chrome mock
         'User-Agent: Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11\r\n'
         'From: williamhgrosset@gmail.com')
@@ -38,7 +38,6 @@ def recv_stream(socket):
         data = socket.recv(4096)
         if not data: break
         total_data.append(data)
-        # Added 'ignore' for issues with www.google.com
     return b''.join(total_data).strip().decode('utf-8', 'ignore')
 
 def requires_https(location):
@@ -46,9 +45,8 @@ def requires_https(location):
     return False
 
 def get_url_from_args(args):
-    if (len(args) != 2): print('Enter the correct amount of arguments.')
-    # TODO: Stricter regex
     # Valid input: www.domain.com or domain.com
+    if (len(args) != 2): print('Enter the correct amount of arguments.')
     url_match = re.match('([www\.]?[\w\.-]*)', args[1], re.IGNORECASE)
     if url_match: return url_match.group(1).strip()
     return ''
