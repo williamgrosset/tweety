@@ -3,7 +3,7 @@ import sys
 import socket
 import ssl
 import re
-import cookie_helper
+import cookie_parser
 import results_logger
 import http2_negotiation
 
@@ -97,8 +97,9 @@ def main():
         if status_code == '100': break
         # OK
         elif status_code == '200':
-            cookies = cookie_helper.get_cookies(response)
+            cookies = cookie_parser.get_cookies(response)
             if cookies: 
+                # TODO: Fix supports_https
                 supports_https = requires_https(redirect_location)
                 supports_http2 = http2_negotiation.supports_http2(input_url)
 
