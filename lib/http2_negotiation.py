@@ -28,7 +28,7 @@ def get_http2_ssl_context():
 def negotiate_tls(tcp_connection, context, url):
     return context.wrap_socket(tcp_connection, server_hostname = url)
 
-def supports_http2(url):
+def check_http2_support(url):
     context = get_http2_ssl_context()
     # TODO: Handle error for creating connection
     tls_connection = negotiate_tls(socket.create_connection((url, 443)), context, url)

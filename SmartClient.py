@@ -3,9 +3,9 @@ import sys
 import socket
 import ssl
 import re
-import cookie_parser
-import results_logger
-import http2_negotiation
+from lib.cookie_parser import get_cookies
+from lib.results_logger import print_results
+from lib.http2_negotiation import check_http2_support
 
 def send_request(socket, location, host):
     # HTTP 1.1 (BNF grammar) (https://tools.ietf.org/html/rfc2616#section-5)
@@ -97,13 +97,13 @@ def main():
         if status_code == '100': break
         # OK
         elif status_code == '200':
-            cookies = cookie_parser.get_cookies(response)
+            cookies = get_cookies(response)
             if cookies: 
                 # TODO: Fix supports_https
                 supports_https = requires_https(redirect_location)
-                supports_http2 = http2_negotiation.supports_http2(input_url)
+                supports_http2 = check_http2_support(input_url)
 
-                results_logger.print_results(
+                print_results(
                     input_url,
                     supports_https,
                     get_http_version(response, supports_http2),
