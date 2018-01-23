@@ -103,6 +103,7 @@ def main():
         # OK
         elif status_code == '200':
             cookies = get_cookies(response)
+            print(response)
             if cookies: 
                 # TODO: Fix supports_https
                 supports_https = requires_https(redirect_location)

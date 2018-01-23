@@ -12,19 +12,8 @@ def print_newest_http_version(http_version):
 
 def print_cookies(cookies):
     print('3. List of cookies:')
-    name = key = domain_name = '-'
-
     for cookie in cookies:
-        # TODO: Stricter regex
-        name_match = re.match('name=(.*)', cookie)
-        key_match = re.search('([\w\.-]*)=', cookie)
-        domain_name_match = re.match('.*domain=([\w\.-]*)', cookie)
-
-        if name_match: name = name_match.group(1)
-        if key_match: key = key_match.group(1)
-        if domain_name_match: domain_name = domain_name_match.group(1)
-
-        print('name: ' + name + ', key: ' + key + ', domain name: ' + domain_name)
+        print('name: ' + cookie.name + ', key: ' + cookie.key + ', domain name: ' + cookie.domain_name)
 
 def print_results(url, supports_https, http_version, cookies):
     print_website(url)
