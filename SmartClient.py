@@ -67,28 +67,26 @@ def get_status_code(response):
     if status_code_match: return status_code_match.group(1)
     return 'No status code found.'
 
+def get_http_version(response, supports_http2):
+    if supports_http2: return 'HTTP/2.0'
+    http_version_match = re.search('(HTTP\/\d\.\d) \d{3}.*', response)
+    if http_version_match: return http_version_match.group(1)
+    return 'No HTTP version found.'
+
 '''
 def upgrade_protocol(version):
 '''
 
 def main():
-    url = get_url_from_args(sys.argv)
-    # TODO: Fix regex
-    if url == '':
-        print('Please enter a valid url.')
-        return
-
-    print(http2_negotiation.supports_http2(url))
+    input_url = get_url_from_args(sys.argv)
+    if input_url == '': print('Please enter a valid url.'); return
 
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
 
-    ssl_client.connect((url, 443))
-    send_request(ssl_client, '/', url)
+    ssl_client.connect((input_url, 443))
+    send_request(ssl_client, '/', input_url)
     response = recv_stream(ssl_client)
-    print('Initial response')
-    print(response)
-    print('END OF BEGINNING RESPONSE')
     redirect_location = get_redirect_location(response)
     url = get_host_url(redirect_location)
 
@@ -99,24 +97,28 @@ def main():
         if status_code == '100': break
         # OK
         elif status_code == '200':
-            print('In 200')
-            # print(response)
-            print('COOKIES')
             cookies = cookie_helper.get_cookies(response)
-            if cookies: results_logger.print_cookies(cookies)
+            if cookies: 
+                supports_https = requires_https(redirect_location)
+                supports_http2 = http2_negotiation.supports_http2(input_url)
+
+                results_logger.print_results(
+                    input_url,
+                    supports_https,
+                    get_http_version(response, supports_http2),
+                    cookies,
+                )
+            else: print('No cookies found.')
             break
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':
-            print('In %s' % status_code)
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             if requires_https(redirect_location):
-                print('requires https')
                 ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
                 ssl_client.connect((url, 443))
                 send_request(ssl_client, redirect_location, url)
                 response = recv_stream(ssl_client)
             else:
-                print('does not require https')
                 client.connect((url, 80))
                 send_request(client, redirect_location, url)
                 response = recv_stream(client)
@@ -127,7 +129,6 @@ def main():
             url = get_host_url(redirect_location)
         # Bad Request
         elif status_code == '400':
-            print('In 400')
             break
         # Not found
         elif status_code == '404': break
