@@ -23,7 +23,9 @@ def send_request(socket, location, host):
     REQUEST_HEADER = (
         'Host: ' + host + '\r\n'
         # Google Chrome mock
-        'User-Agent: Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11\r\n'
+        'User-Agent: Mozilla/5.0 (X11; CrOS i686 2268.111.0) ' +
+        'AppleWebKit/536.11 (KHTML, like Gecko) ' +
+        'Chrome/20.0.1132.57 Safari/536.11\r\n'
         'From: williamhgrosset@gmail.com')
     PAYLOAD = (
         REQUEST_LINE + '\r\n' +
@@ -40,8 +42,8 @@ def recv_stream(socket):
         total_data.append(data)
     return b''.join(total_data).strip().decode('utf-8', 'ignore')
 
-def requires_https(location):
-    if location.startswith('https'): return True
+def requires_https(url):
+    if url.startswith('https'): return True
     return False
 
 def get_url_from_args(args):
@@ -142,7 +144,6 @@ def main():
     # Close out any remaining connections
     ssl_client.close()
     client.close()
-
 
 if __name__ == '__main__':
     main()
