@@ -21,7 +21,7 @@ def send_request(socket, location, host):
     GENERAL_HEADER = (
         'Connection: close')
     REQUEST_HEADER = (
-        'Host: ' + host + '\r\n'
+        'Host: %s ' % host + '\r\n'
         # Google Chrome mock
         'User-Agent: Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11\r\n'
         'From: williamhgrosset@gmail.com')
@@ -109,7 +109,7 @@ def main():
             break
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':
-            print('In ' + status_code)
+            print('In %s' % status_code)
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             if requires_https(redirect_location):
                 print('requires https')
@@ -136,9 +136,10 @@ def main():
         # HTTP Version not supported
         elif status_code == '505': break
         else:
-            print('An unsupported status code has occurred: ' + status_code)
+            print('An unsupported status code has occurred: %s' % status_code)
             break
 
+    # Close out any remaining connections
     ssl_client.close()
     client.close()
 
