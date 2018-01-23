@@ -6,7 +6,7 @@ import ssl
 def get_http2_ssl_context():
     context = ssl.create_default_context(purpose = ssl.Purpose.SERVER_AUTH)
 
-    # RFC 7540 Section 9.2: HTTP/2 requires TLS version 1.2 or higher. Disable TLS 1.1 and lower.
+    # RFC7540 Section 9.2: HTTP/2 requires TLS version 1.2 or higher. Disable TLS 1.1 and lower.
     context.options |= (
         ssl.OP_NO_SSLv2 |
         ssl.OP_NO_SSLv3 |
@@ -14,7 +14,7 @@ def get_http2_ssl_context():
         ssl.OP_NO_TLSv1_1
     )
 
-    # RFC 7540 Section 9.2.1: HTTP/2 over TLS 1.2 MUST disable compression.
+    # RFC7540 Section 9.2.1: HTTP/2 over TLS 1.2 MUST disable compression.
     context.options |= ssl.OP_NO_COMPRESSION
 
     try:

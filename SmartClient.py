@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import sys
 import socket
 import ssl
@@ -8,7 +7,7 @@ from lib.results_logger import print_results
 from lib.http2_negotiation import allows_http2
 
 def send_request(socket, location, host):
-    # HTTP 1.1 (BNF grammar) (https://tools.ietf.org/html/rfc2616#section-5)
+    # RFC2616 Section 5 (HTTP/1.1 BNF Grammar):
     # Request-Line *(( general-header
     #               | request-header
     #               | entity-header ) CRLF)
@@ -22,7 +21,7 @@ def send_request(socket, location, host):
         'Connection: close')
     REQUEST_HEADER = (
         'Host: ' + host + '\r\n'
-        # Google Chrome mock
+        # Google Chrome User-Agent mock
         'User-Agent: Mozilla/5.0 (X11; CrOS i686 2268.111.0) ' +
         'AppleWebKit/536.11 (KHTML, like Gecko) ' +
         'Chrome/20.0.1132.57 Safari/536.11\r\n'
@@ -64,7 +63,7 @@ def get_host_url(location):
     return 'Could not resolve host url.'
 
 def get_status_code(response):
-    # Status codes can be found at https://tools.ietf.org/html/rfc2616#section-6.1.1
+    # RFC2616 Section 6.1.1
     status_code_match = re.search('HTTP\/\d\.\d (\d{3}).*', response)
     if status_code_match: return status_code_match.group(1)
     return 'No status code found.'
@@ -83,11 +82,15 @@ def main():
     input_url = get_url_from_args(sys.argv)
     if input_url == '': print('Please enter a valid url.'); return
 
+    # Wrap socket in SSL
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
 
+    # Create TCP connection and send request
     ssl_client.connect((input_url, 443))
     send_request(ssl_client, '/', input_url)
+
+    # Handle receiving response segments
     response = recv_stream(ssl_client)
     redirect_location = get_redirect_location(response)
     url = get_host_url(redirect_location)

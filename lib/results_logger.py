@@ -8,7 +8,7 @@ def print_https_support(supports_https):
     else: print('1. Support of HTTPS: no')
 
 def print_newest_http_version(http_version):
-    print('2. The newest HTTP versions that the web server supports: ' + http_version)
+    print('2. The newest HTTP version that the web server supports: ' + http_version)
 
 def print_cookies(cookies):
     print('3. List of cookies:')
