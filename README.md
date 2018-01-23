@@ -14,6 +14,7 @@
   + Command-line API
   + Console output
   + HTTP Protocol w/ TCP connection
+  + HTTP/2 support
   + SSL support
   + Sockets (Client and server — pseudo-code for both)
   + Cookies
