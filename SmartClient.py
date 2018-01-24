@@ -2,7 +2,8 @@ import sys
 import socket
 import ssl
 import re
-import lib.http_helper 
+import lib.http_helper
+import lib.socket_helper
 
 def get_url_from_args(args):
     # Valid input: www.domain.com or domain.com
@@ -21,16 +22,16 @@ def main():
     ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
 
     # Create TCP connection and send request
-    ssl_client.connect((input_url, 443))
-    lib.http_helper.send_request(ssl_client, '/', input_url)
+    lib.socket_helper.connect(ssl_client, input_url, 443)
+    lib.socket_helper.send_request(ssl_client, '/', input_url)
 
     # Handle response segments
-    response = lib.http_helper.recv_stream(ssl_client)
+    response = lib.socket_helper.recv_stream(ssl_client)
 
     status_code = lib.http_helper.get_status_code(response)
     if status_code == '200':
         supports_ssl = True
-        lib.http_helper.handle_successful_request(response, input_url, supports_ssl)
+        lib.socket_helper.handle_successful_request(response, input_url, supports_ssl)
         return
 
     redirect_location = lib.http_helper.get_redirect_location(response)
@@ -45,7 +46,7 @@ def main():
             break
         # OK
         elif status_code == '200':
-            lib.http_helper.handle_successful_request(response, input_url, supports_ssl)
+            lib.socket_helper.handle_successful_request(response, input_url, supports_ssl)
             break
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':
@@ -58,13 +59,13 @@ def main():
             if lib.http_helper.requires_https(redirect_location):
                 supports_ssl = True
                 ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
-                ssl_client.connect((url, 443))
-                lib.http_helper.send_request(ssl_client, redirect_location, url)
-                response = lib.http_helper.recv_stream(ssl_client)
+                lib.socket_helper.connect(ssl_client, url, 443)
+                lib.socket_helper.send_request(ssl_client, redirect_location, url)
+                response = lib.socket_helper.recv_stream(ssl_client)
             else:
-                client.connect((url, 80))
-                lib.http_helper.send_request(client, redirect_location, url)
-                response = lib.http_helper.recv_stream(client)
+                lib.socket_helper.connect(client, url, 80)
+                lib.socket_helper.send_request(client, redirect_location, url)
+                response = lib.socket_helper.recv_stream(client)
 
         # Not found
         elif status_code == '404': break
