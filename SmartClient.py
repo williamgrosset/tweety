@@ -2,6 +2,9 @@ import re
 import sys
 import lib.http_helper
 import lib.socket_helper
+from lib.cookie_parser import get_cookies
+from lib.results_logger import print_results
+from lib.http2_negotiation import allows_http2
 
 def get_url_from_args(args):
     # Valid input: www.domain.com or domain.com
@@ -29,7 +32,16 @@ def main():
     status_code = lib.http_helper.get_status_code(response)
     if status_code == '200':
         supports_ssl = True
-        lib.socket_helper.handle_successful_request(response, input_url, supports_ssl)
+        cookies = get_cookies(response)
+        supports_http2 = allows_http2(input_url, supports_ssl)
+        http_version = lib.http_helper.get_http_version(response, supports_http2)
+
+        print_results(
+            input_url,
+            supports_ssl,
+            http_version,
+            cookies,
+        )
         return
 
     redirect_location = lib.http_helper.get_redirect_location(response)
@@ -44,7 +56,16 @@ def main():
             break
         # OK
         elif status_code == '200':
-            lib.socket_helper.handle_successful_request(response, input_url, supports_ssl)
+            cookies = get_cookies(response)
+            supports_http2 = allows_http2(input_url, supports_ssl)
+            http_version = lib.http_helper.get_http_version(response, supports_http2)
+
+            print_results(
+                input_url,
+                supports_ssl,
+                http_version,
+                cookies,
+            )
             break
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':

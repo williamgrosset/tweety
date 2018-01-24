@@ -1,10 +1,6 @@
 import sys
 import ssl
 import socket
-from lib.cookie_parser import get_cookies
-from lib.results_logger import print_results
-from lib.http2_negotiation import allows_http2
-from lib.http_helper import get_http_version 
 
 def initialize():
     return socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -53,14 +49,3 @@ def recv_stream(socket):
         if not data: break
         total_data.append(data)
     return b''.join(total_data).strip().decode('utf-8', 'ignore')
-
-def handle_successful_request(response, input_url, supports_ssl):
-    cookies = get_cookies(response)
-    supports_http2 = allows_http2(input_url, supports_ssl)
-
-    print_results(
-        input_url,
-        supports_ssl,
-        get_http_version(response, supports_http2),
-        cookies,
-    )
