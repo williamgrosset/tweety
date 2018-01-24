@@ -74,11 +74,26 @@ def get_http_version(response, supports_http2):
     if http_version_match: return http_version_match.group(1)
     return 'No HTTP version found.'
 
+def handle_successful_request(response, input_url, supports_https):
+    cookies = get_cookies(response)
+    if cookies:
+        print('In 200')
+        supports_http2 = allows_http2(input_url)
+        print_results(
+            input_url,
+            supports_https,
+            get_http_version(response, supports_http2),
+            cookies,
+        )
+    else: print('No cookies found.')
+
+
 def main():
     input_url = get_url_from_args(sys.argv)
     if input_url == '': print('Please enter a valid url.'); return
 
     # Wrap socket in SSL
+    supports_https = False
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
 
@@ -88,6 +103,12 @@ def main():
 
     # Handle receiving response segments
     response = recv_stream(ssl_client)
+    status_code = get_status_code(response)
+    if status_code == '200':
+        supports_https = True
+        handle_successful_request(response, input_url, supports_https)
+        return
+
     redirect_location = get_redirect_location(response)
     url = get_host_url(redirect_location)
 
@@ -100,24 +121,18 @@ def main():
             break
         # OK
         elif status_code == '200':
-            cookies = get_cookies(response)
-            if cookies: 
-                # TODO: Fix supports_https
-                supports_https = requires_https(redirect_location)
-                supports_http2 = allows_http2(input_url)
-
-                print_results(
-                    input_url,
-                    supports_https,
-                    get_http_version(response, supports_http2),
-                    cookies,
-                )
-            else: print('No cookies found.')
+            handle_successful_request(response, input_url, supports_https)
             break
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':
+            # TODO: Verify that we won't get stuck in a 301/302
+            # loop, ensure were parsing correctly
+            redirect_location = get_redirect_location(response)
+            url = get_host_url(redirect_location)
+
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             if requires_https(redirect_location):
+                supports_https = True
                 ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
                 ssl_client.connect((url, 443))
                 send_request(ssl_client, redirect_location, url)
@@ -127,10 +142,6 @@ def main():
                 send_request(client, redirect_location, url)
                 response = recv_stream(client)
 
-            # TODO: Verify that we won't get stuck in a 301/302
-            # loop, ensure were parsing correctly
-            redirect_location = get_redirect_location(response)
-            url = get_host_url(redirect_location)
         # Not found
         elif status_code == '404': break
         # HTTP Version not supported (maybe not necessary)
