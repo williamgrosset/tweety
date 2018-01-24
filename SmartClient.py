@@ -6,7 +6,7 @@ from lib.cookie_parser import get_cookies
 from lib.results_logger import print_results
 from lib.http2_negotiation import allows_http2
 
-def send_request(socket, location, host):
+def send_request(socket, location, host, options = ''):
     # RFC2616 Section 5 (HTTP/1.1 BNF Grammar):
     # Request-Line *(( general-header
     #               | request-header
@@ -24,7 +24,8 @@ def send_request(socket, location, host):
         # Google Chrome User-Agent mock
         'User-Agent: Mozilla/5.0 (X11; CrOS i686 2268.111.0) ' +
         'AppleWebKit/536.11 (KHTML, like Gecko) ' +
-        'Chrome/20.0.1132.57 Safari/536.11\r\n'
+        'Chrome/20.0.1132.57 Safari/536.11\r\n' +
+        options +
         'From: williamhgrosset@gmail.com')
     PAYLOAD = (
         REQUEST_LINE + '\r\n' +
@@ -44,13 +45,6 @@ def recv_stream(socket):
 def requires_https(url):
     if url.startswith('https'): return True
     return False
-
-def get_url_from_args(args):
-    # Valid input: www.domain.com or domain.com
-    if (len(args) != 2): print('Enter the correct amount of arguments.')
-    url_match = re.match('([www\.]?[\w\.-]*)', args[1], re.IGNORECASE)
-    if url_match: return url_match.group(1).strip()
-    return ''
 
 def get_redirect_location(response):
     location_match = re.search('Location: (http[s?]*:\/\/[\w\.-\/]+).*', response, re.IGNORECASE)
@@ -74,26 +68,30 @@ def get_http_version(response, supports_http2):
     if http_version_match: return http_version_match.group(1)
     return 'No HTTP version found.'
 
-def handle_successful_request(response, input_url, supports_https):
+def handle_successful_request(response, input_url, supports_ssl):
     cookies = get_cookies(response)
-    if cookies:
-        print('In 200')
-        supports_http2 = allows_http2(input_url)
-        print_results(
-            input_url,
-            supports_https,
-            get_http_version(response, supports_http2),
-            cookies,
-        )
-    else: print('No cookies found.')
+    supports_http2 = allows_http2(input_url, supports_ssl)
 
+    print_results(
+        input_url,
+        supports_ssl,
+        get_http_version(response, supports_http2),
+        cookies,
+    )
+
+def get_url_from_args(args):
+    # Valid input: www.domain.com or domain.com
+    if (len(args) != 2): print('Enter the correct amount of arguments.')
+    url_match = re.match('([www\.]?[\w\.-]*)', args[1], re.IGNORECASE)
+    if url_match: return url_match.group(1).strip()
+    return ''
 
 def main():
     input_url = get_url_from_args(sys.argv)
     if input_url == '': print('Please enter a valid url.'); return
 
-    # Wrap socket in SSL
-    supports_https = False
+    # Wrap socket in SSL initially
+    supports_ssl = False
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
 
@@ -101,12 +99,13 @@ def main():
     ssl_client.connect((input_url, 443))
     send_request(ssl_client, '/', input_url)
 
-    # Handle receiving response segments
+    # Handle response segments
     response = recv_stream(ssl_client)
+
     status_code = get_status_code(response)
     if status_code == '200':
-        supports_https = True
-        handle_successful_request(response, input_url, supports_https)
+        supports_ssl = True
+        handle_successful_request(response, input_url, supports_ssl)
         return
 
     redirect_location = get_redirect_location(response)
@@ -121,7 +120,7 @@ def main():
             break
         # OK
         elif status_code == '200':
-            handle_successful_request(response, input_url, supports_https)
+            handle_successful_request(response, input_url, supports_ssl)
             break
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':
@@ -132,7 +131,7 @@ def main():
 
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             if requires_https(redirect_location):
-                supports_https = True
+                supports_ssl = True
                 ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
                 ssl_client.connect((url, 443))
                 send_request(ssl_client, redirect_location, url)
