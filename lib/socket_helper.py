@@ -14,7 +14,7 @@ def connect(socket, host, port):
     except Exception:
         print('Socket connection refused with host: %s, on port: %d.' % (host, port)); sys.exit()
 
-def send_request(socket, location, host, options = ''):
+def create_request(location, host, options = ''):
     # RFC2616 Section 5 (HTTP/1.1 BNF Grammar):
     # Request-Line *(( general-header
     #               | request-header
@@ -35,12 +35,13 @@ def send_request(socket, location, host, options = ''):
         'Chrome/20.0.1132.57 Safari/536.11\r\n' +
         options +
         'From: williamhgrosset@gmail.com')
-    PAYLOAD = (
+    return (
         REQUEST_LINE + '\r\n' +
         GENERAL_HEADER + '\r\n' +
         REQUEST_HEADER + '\r\n\r\n')
 
-    socket.sendall(PAYLOAD.encode('utf-8'))
+def send(socket, payload):
+    socket.sendall(payload.encode('utf-8'))
 
 def recv_stream(socket):
     total_data = []

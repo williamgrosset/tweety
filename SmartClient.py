@@ -22,9 +22,12 @@ def main():
     client = lib.socket_helper.initialize()
     ssl_client = lib.socket_helper.ssl_wrap(client)
 
-    # Create TCP connection and send request
+    # Create TCP connection
     lib.socket_helper.connect(ssl_client, input_url, 443)
-    lib.socket_helper.send_request(ssl_client, '/', input_url)
+
+    # Create and send GET request
+    request = lib.socket_helper.create_request('/', input_url)
+    lib.socket_helper.send(ssl_client, request)
 
     # Handle response segments
     response = lib.socket_helper.recv_stream(ssl_client)
@@ -78,12 +81,16 @@ def main():
             if lib.http_helper.requires_https(redirect_location):
                 supports_ssl = True
                 ssl_client = lib.socket_helper.ssl_wrap(client)
-                lib.socket_helper.connect(ssl_client, url, 443)
-                lib.socket_helper.send_request(ssl_client, redirect_location, url)
+
+                lib.socket_helper.connect(ssl_client, input_url, 443)
+                request = lib.socket_helper.create_request(redirect_location, url)
+                lib.socket_helper.send(ssl_client, request)
+
                 response = lib.socket_helper.recv_stream(ssl_client)
             else:
                 lib.socket_helper.connect(client, url, 80)
-                lib.socket_helper.send_request(client, redirect_location, url)
+                request = lib.socket_helper.create_request(redirect_location, url)
+                lib.socket_helper.send(client, request)
                 response = lib.socket_helper.recv_stream(client)
 
         # Not found

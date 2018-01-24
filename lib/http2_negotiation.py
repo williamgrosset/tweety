@@ -45,7 +45,8 @@ def allows_http2(url, supports_ssl):
         if negotiated_protocol == 'h2': return True
     else:
         lib.socket_helper.connect(client, url, 80)
-        lib.socket_helper.send_request(client, '/', url, 'Upgrade: h2c\r\n')
+        request = lib.socket_helper.create_request('/', url, 'Upgrade: h2c\r\n')
+        lib.socket_helper.send(client, request)
 
         response = lib.socket_helper.recv_stream(client)
 
