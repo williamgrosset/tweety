@@ -31,18 +31,23 @@ def negotiate_tls(tcp_connection, context, url):
     return context.wrap_socket(tcp_connection, server_hostname = url)
 
 def allows_http2(url, supports_ssl):
+    client = lib.socket_helper.initialize()
+
     if supports_ssl:
         context = get_http2_ssl_context()
-        # TODO: Handle error for creating connection
-        tls_connection = negotiate_tls(socket.create_connection((url, 443)), context, url)
+
+        lib.socket_helper.connect(client, url, 443)
+        tls_connection = negotiate_tls(client, context, url)
 
         negotiated_protocol = tls_connection.selected_alpn_protocol()
         if negotiated_protocol is None: negotiated_protocol = tls_connection.selected_npn_protocol()
 
         if negotiated_protocol == 'h2': return True
     else:
-        client = socket.create_connection((url, 80))
+        lib.socket_helper.connect(client, url, 80)
         lib.socket_helper.send_request(client, '/', url, 'Upgrade: h2c\r\n')
+
         response = lib.socket_helper.recv_stream(client)
+
         if lib.http_helper.get_status_code(response) == '101': return True
     return False
