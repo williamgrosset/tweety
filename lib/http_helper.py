@@ -6,12 +6,12 @@ def requires_https(url):
 
 def get_redirect_location(response):
     location_match = re.search('Location: (http[s?]*:\/\/[\w\.-\/]+).*', response, re.IGNORECASE)
-    if location_match: return location_match.group(1).strip()
+    if location_match: return location_match.group(1)
     return 'Could not resolve redirect location.'
 
 def get_host_url(location):
     location_match = re.match('http[s?]*:\/\/([\w\.-]*)\/', location, re.IGNORECASE)
-    if location_match: return location_match.group(1).strip()
+    if location_match: return location_match.group(1)
     return 'Could not resolve host url.'
 
 def get_status_code(response):

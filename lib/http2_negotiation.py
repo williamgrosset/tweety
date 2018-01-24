@@ -1,6 +1,7 @@
 import socket
 import ssl
 import lib.http_helper
+import lib.socket_helper
 
 # HTTP/2.0 Negotiation Reference: https://python-hyper.org/projects/h2/en/stable/negotiating-http2.html
 
@@ -41,7 +42,7 @@ def allows_http2(url, supports_ssl):
         if negotiated_protocol == 'h2': return True
     else:
         client = socket.create_connection((url, 80))
-        lib.http_helper.send_request(client, '/', url, 'Upgrade: h2c\r\n')
-        response = lib.http_helper.recv_stream(client)
+        lib.socket_helper.send_request(client, '/', url, 'Upgrade: h2c\r\n')
+        response = lib.socket_helper.recv_stream(client)
         if lib.http_helper.get_status_code(response) == '101': return True
     return False
