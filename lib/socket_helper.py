@@ -1,8 +1,16 @@
 import sys
+import ssl
+import socket
 from lib.cookie_parser import get_cookies
 from lib.results_logger import print_results
 from lib.http2_negotiation import allows_http2
 from lib.http_helper import get_http_version 
+
+def initialize():
+    return socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+def ssl_wrap(socket):
+    return ssl.wrap_socket(socket, ssl_version = ssl.PROTOCOL_TLS)
 
 def connect(socket, host, port):
     try:

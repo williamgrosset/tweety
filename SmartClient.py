@@ -1,7 +1,5 @@
-import sys
-import socket
-import ssl
 import re
+import sys
 import lib.http_helper
 import lib.socket_helper
 
@@ -18,8 +16,8 @@ def main():
 
     # Wrap socket in SSL initially
     supports_ssl = False
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
+    client = lib.socket_helper.initialize()
+    ssl_client = lib.socket_helper.ssl_wrap(client)
 
     # Create TCP connection and send request
     lib.socket_helper.connect(ssl_client, input_url, 443)
@@ -55,10 +53,10 @@ def main():
             redirect_location = lib.http_helper.get_redirect_location(response)
             url = lib.http_helper.get_host_url(redirect_location)
 
-            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client = lib.socket_helper.initialize()
             if lib.http_helper.requires_https(redirect_location):
                 supports_ssl = True
-                ssl_client = ssl.wrap_socket(client, ssl_version = ssl.PROTOCOL_TLS)
+                ssl_client = lib.socket_helper.ssl_wrap(client)
                 lib.socket_helper.connect(ssl_client, url, 443)
                 lib.socket_helper.send_request(ssl_client, redirect_location, url)
                 response = lib.socket_helper.recv_stream(ssl_client)
