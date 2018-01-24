@@ -29,6 +29,7 @@ def negotiate_tls(tcp_connection, context, url):
     return context.wrap_socket(tcp_connection, server_hostname = url)
 
 def allows_http2(url):
+    # TODO: Support testing for HTTP 2 on port 80 (w/o TLS)
     context = get_http2_ssl_context()
     # TODO: Handle error for creating connection
     tls_connection = negotiate_tls(socket.create_connection((url, 443)), context, url)

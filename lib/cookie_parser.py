@@ -25,6 +25,7 @@ def get_cookies(response):
         cookies = []
         for cookie in cookie_match:
             # TODO: Stricter regex
+            # TODO: Verify that name is the correct attribute
             name_match = re.match('name=(.*)', cookie)
             key_match = re.search('([\w\.-]*)=', cookie)
             domain_name_match = re.match('.*domain=([\w\.-]*)', cookie)

@@ -74,10 +74,6 @@ def get_http_version(response, supports_http2):
     if http_version_match: return http_version_match.group(1)
     return 'No HTTP version found.'
 
-'''
-def upgrade_protocol(version):
-'''
-
 def main():
     input_url = get_url_from_args(sys.argv)
     if input_url == '': print('Please enter a valid url.'); return
@@ -99,11 +95,12 @@ def main():
         status_code = get_status_code(response)
 
         # Switching Protocols
-        if status_code == '100': break
+        if status_code == '101':
+            print('Currently working on supporting 101...')
+            break
         # OK
         elif status_code == '200':
             cookies = get_cookies(response)
-            print(response)
             if cookies: 
                 # TODO: Fix supports_https
                 supports_https = requires_https(redirect_location)
@@ -134,12 +131,9 @@ def main():
             # loop, ensure were parsing correctly
             redirect_location = get_redirect_location(response)
             url = get_host_url(redirect_location)
-        # Bad Request
-        elif status_code == '400':
-            break
         # Not found
         elif status_code == '404': break
-        # HTTP Version not supported
+        # HTTP Version not supported (maybe not necessary)
         elif status_code == '505': break
         else:
             print('An unsupported status code has occurred: %s' % status_code)
