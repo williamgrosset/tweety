@@ -13,6 +13,18 @@ def get_url_from_args(args):
     if url_match: return url_match.group(1).strip()
     return ''
 
+def handle_successful_request(response, url, supports_ssl):
+    cookies = get_cookies(response)
+    supports_http2 = allows_http2(url, supports_ssl)
+    http_version = lib.http_helper.get_http_version(response, supports_http2)
+
+    print_results(
+        url,
+        supports_ssl,
+        http_version,
+        cookies,
+    )
+
 def main():
     input_url = get_url_from_args(sys.argv)
     if input_url == '': print('Please enter a valid url.'); return
@@ -35,16 +47,7 @@ def main():
     status_code = lib.http_helper.get_status_code(response)
     if status_code == '200':
         supports_ssl = True
-        cookies = get_cookies(response)
-        supports_http2 = allows_http2(input_url, supports_ssl)
-        http_version = lib.http_helper.get_http_version(response, supports_http2)
-
-        print_results(
-            input_url,
-            supports_ssl,
-            http_version,
-            cookies,
-        )
+        handle_successful_request(response, input_url, supports_ssl)
         return
 
     redirect_location = lib.http_helper.get_redirect_location(response)
@@ -57,18 +60,9 @@ def main():
         if status_code == '101':
             print('Currently working on supporting 101...')
             break
-        # OK
+        # Success
         elif status_code == '200':
-            cookies = get_cookies(response)
-            supports_http2 = allows_http2(input_url, supports_ssl)
-            http_version = lib.http_helper.get_http_version(response, supports_http2)
-
-            print_results(
-                input_url,
-                supports_ssl,
-                http_version,
-                cookies,
-            )
+            handle_successful_request(response, input_url, supports_ssl)
             break
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':
