@@ -40,6 +40,7 @@ def main():
             lib.http_parser.get_http_version(response, allows_http2(input_url, supports_ssl)),
             lib.http_parser.get_cookies(response),
         )
+        ssl_client.close()
         return
 
     redirect_location = lib.http_parser.get_redirect_location(response)
@@ -56,7 +57,7 @@ def main():
                 lib.http_parser.get_http_version(response, allows_http2(input_url, supports_ssl)),
                 lib.http_parser.get_cookies(response),
             )
-            return
+            break
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':
             # TODO: Verify that we won't get stuck in a 301/302
@@ -73,11 +74,13 @@ def main():
             else:
                 response = lib.socket_helper.handle_redirect(client, url, 80, request)
 
-        # TODO: Not found
-        elif status_code == '404': return
+        # Not found
+        elif status_code == '404':
+            print('Resource not found, try a different host.')
+            break
         else:
             print('An unsupported status code has occurred: %s' % status_code)
-            return
+            break
 
     # Close out any remaining connections
     ssl_client.close()
