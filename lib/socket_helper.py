@@ -53,3 +53,8 @@ def recv_stream(client_socket):
         if not data: break
         total_data.append(data)
     return b''.join(total_data).strip().decode('utf-8', 'ignore')
+
+def handle_redirect(client_socket, url, port, request):
+    connect(client_socket, url, port)
+    send(client_socket, request)
+    return recv_stream(client_socket)

@@ -61,23 +61,17 @@ def main():
         elif status_code == '301' or status_code == '302':
             # TODO: Verify that we won't get stuck in a 301/302
             # loop, ensure were parsing correctly
-            client = lib.socket_helper.initialize()
             redirect_location = lib.http_parser.get_redirect_location(response)
             url = lib.http_parser.get_host_url(redirect_location)
+            client = lib.socket_helper.initialize()
+            request = lib.socket_helper.create_request(redirect_location, url)
 
             if lib.http_parser.requires_https(redirect_location):
                 supports_ssl = True
                 ssl_client = lib.socket_helper.ssl_wrap(client)
-
-                lib.socket_helper.connect(ssl_client, input_url, 443)
-                request = lib.socket_helper.create_request(redirect_location, url)
-                lib.socket_helper.send(ssl_client, request)
-                response = lib.socket_helper.recv_stream(ssl_client)
+                response = lib.socket_helper.handle_redirect(ssl_client, input_url, 443, request)
             else:
-                lib.socket_helper.connect(client, url, 80)
-                request = lib.socket_helper.create_request(redirect_location, url)
-                lib.socket_helper.send(client, request)
-                response = lib.socket_helper.recv_stream(client)
+                response = lib.socket_helper.handle_redirect(client, url, 80, request)
 
         # TODO: Not found
         elif status_code == '404': return

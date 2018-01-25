@@ -1,5 +1,5 @@
 # tweety
-:bird: A barebone HTTP client built directly using sockets.
+:bird: A barebone HTTP client built directly with sockets.
 
 <gif here>
 
@@ -8,6 +8,7 @@
   + `.gif` demo
   + Project description
   + Assignment description
+  + Helper libraries
   + Command-line API
   + Console output
   + HTTP Protocol w/ TCP connection
@@ -22,8 +23,6 @@
 + Error-handling for unknown hostnames
 + Switching between protocols (test with both HTTP/1.1 and HTTP/2.0)
   + Identify highest supported HTTP version
-+ Create cookie scanner helper (optional)
-  + Reseach ways to grab all possible cookies (e.g Google analytic cookies?)
 + Close out all socket TCP connections? (`s.close()`)
 + Cookie domain name defaulting
 + Test on Linux (ssh)
