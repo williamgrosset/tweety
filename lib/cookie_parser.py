@@ -36,6 +36,7 @@ def get_cookies(response):
             if domain_name_match: cookie.add_domain_name(domain_name_match.group(1))
 
             cookies.append(cookie)
+        cookies.sort(key=lambda cookie: cookie.name)
         return cookies
     else: return []
 
