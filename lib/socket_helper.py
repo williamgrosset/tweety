@@ -5,13 +5,16 @@ import socket
 def initialize():
     return socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-def ssl_wrap(socket):
-    return ssl.wrap_socket(socket, ssl_version = ssl.PROTOCOL_TLS)
-
-def connect(socket, host, port):
+def ssl_wrap(client_socket):
     try:
-        socket.connect((host, port))
-    except Exception:
+        return ssl.wrap_socket(client_socket, ssl_version = ssl.PROTOCOL_TLS)
+    except ssl.SSLError as e:
+        print('Error occurred while wrapping socket in SSL: %s.' % e); sys.exit()
+
+def connect(client_socket, host, port):
+    try:
+        client_socket.connect((host, port))
+    except socket.gaierror as e:
         print('Socket connection refused with host: %s, on port: %d.' % (host, port)); sys.exit()
 
 def create_request(location, host, options = ''):
@@ -40,13 +43,13 @@ def create_request(location, host, options = ''):
         GENERAL_HEADER + '\r\n' +
         REQUEST_HEADER + '\r\n\r\n')
 
-def send(socket, payload):
-    socket.sendall(payload.encode('utf-8'))
+def send(client_socket, payload):
+    client_socket.sendall(payload.encode('utf-8'))
 
-def recv_stream(socket):
+def recv_stream(client_socket):
     total_data = []
     while True:
-        data = socket.recv(4096)
+        data = client_socket.recv(4096)
         if not data: break
         total_data.append(data)
     return b''.join(total_data).strip().decode('utf-8', 'ignore')

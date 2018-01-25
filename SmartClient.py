@@ -17,7 +17,7 @@ def main():
     input_url = get_url_from_args(sys.argv)
     if input_url == '': print('Please enter a valid url.'); return
 
-    # Wrap socket in SSL initially
+    # Initialize and wrap socket in SSL
     supports_ssl = False
     client = lib.socket_helper.initialize()
     ssl_client = lib.socket_helper.ssl_wrap(client)

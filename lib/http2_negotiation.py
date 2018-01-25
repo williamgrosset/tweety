@@ -1,5 +1,6 @@
-import socket
+import sys
 import ssl
+import socket
 import lib.http_helper
 import lib.socket_helper
 
@@ -28,7 +29,10 @@ def get_http2_ssl_context():
     return context
 
 def negotiate_tls(tcp_connection, context, url):
-    return context.wrap_socket(tcp_connection, server_hostname = url)
+    try:
+        return context.wrap_socket(tcp_connection, server_hostname = url)
+    except ssl.SSLError as e:
+        print('Error occurred while wrapping socket in SSL: %s.' % e); sys.exit()
 
 def allows_http2(url, supports_ssl):
     client = lib.socket_helper.initialize()
