@@ -1,6 +1,6 @@
 import sys
 import ssl
-import lib.http_helper
+import lib.http_parser
 import lib.socket_helper
 
 # HTTP/2.0 Negotiation Reference: https://python-hyper.org/projects/h2/en/stable/negotiating-http2.html
@@ -30,8 +30,8 @@ def get_http2_ssl_context():
 def negotiate_tls(tcp_connection, context, url):
     try:
         return context.wrap_socket(tcp_connection, server_hostname = url)
-    except ssl.SSLError as e:
-        print('Error occurred while wrapping socket in SSL: %s.' % e); sys.exit()
+    except Exception:
+        print('Error occurred while wrapping socket in SSL. Try a different host.'); sys.exit()
 
 def allows_http2(url, supports_ssl):
     client = lib.socket_helper.initialize()
@@ -53,5 +53,5 @@ def allows_http2(url, supports_ssl):
 
         response = lib.socket_helper.recv_stream(client)
 
-        if lib.http_helper.get_status_code(response) == '101': return True
+        if lib.http_parser.get_status_code(response) == '101': return True
     return False

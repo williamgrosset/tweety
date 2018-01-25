@@ -25,11 +25,11 @@ def get_cookies(response):
         cookies = []
         for cookie in cookie_match:
             # TODO: Stricter regex
-            # TODO: Verify that name is the correct attribute
-            name_match = re.match('name=(.*)', cookie)
+            name_match = re.match('.*name=([\w\.-]*)', cookie)
             key_match = re.search('([\w\.-]*)=', cookie)
             domain_name_match = re.match('.*domain=([\w\.-]*)', cookie)
 
+            # TODO: Domain name default
             cookie = Cookie()
             if name_match: cookie.add_name(name_match.group(1))
             if key_match: cookie.add_key(key_match.group(1))
@@ -40,4 +40,4 @@ def get_cookies(response):
         return cookies
     else: return []
 
-# TODO: Helper functions to retrieve all possible cookies
+# TODO: Helper functions to retrieve Google Analytic cookies

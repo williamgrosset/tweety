@@ -8,8 +8,8 @@ def initialize():
 def ssl_wrap(client_socket):
     try:
         return ssl.wrap_socket(client_socket, ssl_version = ssl.PROTOCOL_TLS)
-    except ssl.SSLError as e:
-        print('Error occurred while wrapping socket in SSL: %s.' % e); sys.exit()
+    except Exception:
+        print('Error occurred while wrapping socket in SSL. Try a different host.'); sys.exit()
 
 def connect(client_socket, host, port):
     try:
