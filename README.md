@@ -1,10 +1,7 @@
 # tweety
 :bird: A barebone HTTP client built directly using sockets.
 
-## Notes:
-+ [HTTP/1.0 RFC1945](https://tools.ietf.org/html/rfc1945)
-+ [HTTP/1.1 RFC2616](https://tools.ietf.org/html/rfc2616)
-+ [HTTP/2.0 RFC7540](https://tools.ietf.org/html/rfc7540)
+<gif here>
 
 ## TODO
 + `README.md` section descriptions:
@@ -28,3 +25,10 @@
 + Create cookie scanner helper
   + Reseach ways to grab all possible cookies (e.g Google analytic cookies?)
 + Close out all socket TCP connections? (`s.close()`)
++ Cookie domain name defaulting
+
+### References
++ [HTTP/1.0 RFC1945](https://tools.ietf.org/html/rfc1945)
++ [HTTP/1.1 RFC2616](https://tools.ietf.org/html/rfc2616)
++ [HTTP/2.0 RFC7540](https://tools.ietf.org/html/rfc7540)
++ [HTTP/2.0 Negotiation](https://python-hyper.org/projects/h2/en/stable/negotiating-http2.html)

@@ -7,23 +7,10 @@ from lib.results_logger import print_results
 from lib.http2_negotiation import allows_http2
 
 def get_url_from_args(args):
-    # Valid input: www.domain.com or domain.com
     if (len(args) != 2): print('Enter the correct amount of arguments.')
     url_match = re.match('([www\.]?[\w\.-]*)', args[1], re.IGNORECASE)
-    if url_match: return url_match.group(1).strip()
+    if url_match: return url_match.group(1)
     return ''
-
-def handle_successful_request(response, url, supports_ssl):
-    cookies = get_cookies(response)
-    supports_http2 = allows_http2(url, supports_ssl)
-    http_version = lib.http_helper.get_http_version(response, supports_http2)
-
-    print_results(
-        url,
-        supports_ssl,
-        http_version,
-        cookies,
-    )
 
 def main():
     input_url = get_url_from_args(sys.argv)
@@ -47,7 +34,12 @@ def main():
     status_code = lib.http_helper.get_status_code(response)
     if status_code == '200':
         supports_ssl = True
-        handle_successful_request(response, input_url, supports_ssl)
+        print_results(
+            input_url,
+            supports_ssl,
+            lib.http_helper.get_http_version(response, allows_http2(input_url, supports_ssl)),
+            get_cookies(response),
+        )
         return
 
     redirect_location = lib.http_helper.get_redirect_location(response)
@@ -62,7 +54,12 @@ def main():
             break
         # Success
         elif status_code == '200':
-            handle_successful_request(response, input_url, supports_ssl)
+            print_results(
+                input_url,
+                supports_ssl,
+                lib.http_helper.get_http_version(response, allows_http2(input_url, supports_ssl)),
+                get_cookies(response),
+            )
             break
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':

@@ -1,6 +1,5 @@
 import sys
 import ssl
-import socket
 import lib.http_helper
 import lib.socket_helper
 
