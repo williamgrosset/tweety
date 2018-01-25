@@ -22,11 +22,12 @@ def get_http2_ssl_context():
     try:
         context.set_alpn_protocols(['h2', 'http/1.1'])
         context.set_npn_protocols(['h2', 'http/1.1'])
-    except NotImplementedError:
+    except Exception:
         pass
 
     return context
 
+# Cannot use lib/socket_helper, necessary for server_hostname
 def negotiate_tls(tcp_connection, context, url):
     try:
         return context.wrap_socket(tcp_connection, server_hostname = url)

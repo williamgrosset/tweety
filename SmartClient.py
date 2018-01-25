@@ -73,11 +73,11 @@ def main():
                 response = lib.socket_helper.handle_redirect(ssl_client, input_url, 443, request)
             else:
                 response = lib.socket_helper.handle_redirect(client, url, 80, request)
-
-        # Not found
+        # Not Found
         elif status_code == '404':
             print('Resource not found, try a different host.')
             break
+        # Unsupported Status Code
         else:
             print('An unsupported status code has occurred: %s' % status_code)
             break

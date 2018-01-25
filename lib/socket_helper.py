@@ -14,7 +14,7 @@ def ssl_wrap(client_socket):
 def connect(client_socket, host, port):
     try:
         client_socket.connect((host, port))
-    except socket.gaierror as e:
+    except Exception:
         print('Socket connection refused with host: %s, on port: %d.' % (host, port)); sys.exit()
 
 def create_request(location, host, options = ''):
@@ -23,7 +23,6 @@ def create_request(location, host, options = ''):
     #               | request-header
     #               | entity-header ) CRLF)
     #              CRLF
-    # TODO: General Header: Possibly add Upgrade field for 101 (Switching Protocols) response
     REQUEST_LINE = (
         'GET ' +
         location +
