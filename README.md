@@ -1,23 +1,39 @@
 # tweety
 :bird: A barebone HTTP client built directly with sockets.
 
-<gif here>
+gif
+
+## Overview
++ Project description
++ Assignment description
++ RFC Guidelines
+
+### Command-line interface
+`$ python3 SmartClient.py www.google.com`
+
+### Helper libaries
+...
+
+### HTTP protocol
+...
+
+### HTTP/2 support
++ Include console output
+
+### SSL support
+...
+
+### Sockets and TCP connection
++ Sockets (Client and server — pseudo-code for both)
+
+### Cookies
+...
+
+## Disclaimer
+...
 
 ## TODO
 + `README.md` section descriptions:
-  + `.gif` demo
-  + Project description
-  + Assignment description
-  + Helper libraries
-  + Command-line API
-  + Console output
-  + HTTP Protocol w/ TCP connection
-  + HTTP/2 support
-  + SSL support
-  + Sockets (Client and server — pseudo-code for both)
-  + Cookies
-  + URLs/URIs
-  + Disclaimer
 + Clean-up `Smartclient.py`
   + Python linting module (add reference in README)
 + Error-handling for unknown hostnames
