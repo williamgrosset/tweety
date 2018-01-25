@@ -22,10 +22,11 @@
 + Error-handling for unknown hostnames
 + Switching between protocols (test with both HTTP/1.1 and HTTP/2.0)
   + Identify highest supported HTTP version
-+ Create cookie scanner helper
++ Create cookie scanner helper (optional)
   + Reseach ways to grab all possible cookies (e.g Google analytic cookies?)
 + Close out all socket TCP connections? (`s.close()`)
 + Cookie domain name defaulting
++ Test on Linux (ssh)
 
 ### References
 + [HTTP/1.0 RFC1945](https://tools.ietf.org/html/rfc1945)
