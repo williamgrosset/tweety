@@ -2,7 +2,6 @@ import re
 import sys
 import lib.http_parser
 import lib.socket_helper
-from lib.cookie_parser import get_cookies
 from lib.results_logger import print_results
 from lib.http2_negotiation import allows_http2
 
@@ -39,7 +38,7 @@ def main():
             input_url,
             supports_ssl,
             lib.http_parser.get_http_version(response, allows_http2(input_url, supports_ssl)),
-            get_cookies(response),
+            lib.http_parser.get_cookies(response),
         )
         return
 
@@ -55,7 +54,7 @@ def main():
                 input_url,
                 supports_ssl,
                 lib.http_parser.get_http_version(response, allows_http2(input_url, supports_ssl)),
-                get_cookies(response),
+                lib.http_parser.get_cookies(response),
             )
             return
         # Moved Permanently or Found

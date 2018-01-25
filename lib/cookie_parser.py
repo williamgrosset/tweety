@@ -39,5 +39,3 @@ def get_cookies(response):
         cookies.sort(key=lambda cookie: cookie.name)
         return cookies
     else: return []
-
-# TODO: Helper functions to retrieve Google Analytic cookies
