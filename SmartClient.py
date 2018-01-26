@@ -30,8 +30,8 @@ def main():
     # Handle response segments
     response = lib.socket_helper.recv_stream(ssl_client)
 
-    status_code = lib.http_parser.get_status_code(response)
     # Handle initial success response
+    status_code = lib.http_parser.get_status_code(response)
     if status_code == '200':
         supports_ssl = True
         print_results(
@@ -55,9 +55,9 @@ def main():
         # Success or Not Found
         if status_code == '200' or status_code == '404':
             print_results(
-                input_url,
+                url,
                 supports_ssl,
-                lib.http_parser.get_http_version(response, allows_http2(input_url, supports_ssl)),
+                lib.http_parser.get_http_version(response, allows_http2(url, supports_ssl)),
                 lib.http_parser.get_cookies(response),
             )
             break

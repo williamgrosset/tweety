@@ -5,19 +5,17 @@
 
 ## TODO
 + Clean-up `SmartClient.py`
+  + handle 404, 505 appropriately?
 + Error-handling for unknown hostnames
 + Close out all socket TCP connections? (`s.close()`)
 + Test on Linux (ssh)
-+ `README.md` section descriptions
 
 ## Overview
-This project was designed for an assignment for the [Computer Communications and Networks](https://github.com/williamgrosset/tweety/blob/master/csc361_p1.pdf) class. The purpose of this client is to support a basic `GET` request to a web server over the HTTP protocol. `SmartClient.py` will echo web server's support for HTTPs, highest HTTP version, and the available cookies. The HTTP/1.1 RFC 
-  + RFC guidelines
+This project was designed for an assignment for the [Computer Communications and Networks](https://github.com/williamgrosset/tweety/blob/master/csc361_p1.pdf) class. The purpose of this client is to support a basic `GET` request to a web server over the HTTP protocol. `SmartClient.py` will echo web server's support for HTTPs, highest HTTP version, and the available cookies. See references below for RFC papers (1945, 2616, 7450) outlining the HTTP/x.x (1.0, 1.1, 2.0) protocol.
 
 ### Usage 
-
++ **Prerequisite:** Python 3.6.4
 ```bash
-# Prerequisite: Python 3.6.4
 $ python3 SmartClient.py www.google.com
 
 # Example Output
@@ -30,7 +28,7 @@ name: -, key: NID, domain name: .google.ca
 ```
 
 ### Project Layout
-`SmartClient` is the entry point that uses the custom helper files below. The Python libaries that were used are: `re`, `sys`, `socket`, `ssl`.
+`SmartClient` is the main entry point, which uses the custom helper files below. The following Python libaries used are: `re`, `sys`, `socket`, `ssl`.
 
 ```bash
 $ cd <PROJECT-PATH>/lib/
@@ -42,19 +40,19 @@ http_parser.py        socket_helper.py
 ...
 
 ### HTTP/2.0 Support
-+ Include console output
+...
 
 ### SSL Support
 ...
 
 ### Sockets and TCP Connection
-+ Sockets (Client and server — pseudo-code for both)
+Sockets provide an API to the network layer to create a TCP connection for our HTTP request.
 
 #### Client
-...
++ pseudo-code
 
 #### Server
-...
++ pseudo-code
 
 ### Cookies
 ...
