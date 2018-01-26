@@ -27,7 +27,7 @@ def get_http2_ssl_context():
 
     return context
 
-# Cannot use lib/socket_helper, necessary for server_hostname
+# Cannot use lib/socket_helper (necessary for server_hostname parameter)
 def negotiate_tls(tcp_connection, context, url):
     try:
         return context.wrap_socket(tcp_connection, server_hostname = url)

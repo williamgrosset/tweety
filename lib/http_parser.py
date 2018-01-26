@@ -50,12 +50,10 @@ def get_cookies(response):
     if cookie_match:
         cookies = []
         for cookie in cookie_match:
-            # TODO: Stricter regex
             name_match = re.match('.*name=([\w\.-]*)', cookie)
             key_match = re.search('([\w\.-]*)=', cookie)
             domain_name_match = re.match('.*domain=([\w\.-]*)', cookie)
 
-            # TODO: Domain name default
             cookie = Cookie()
             if name_match: cookie.add_name(name_match.group(1))
             if key_match: cookie.add_key(key_match.group(1))
