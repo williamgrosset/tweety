@@ -32,7 +32,7 @@ def negotiate_tls(tcp_connection, context, url):
     try:
         return context.wrap_socket(tcp_connection, server_hostname = url)
     except Exception:
-        print('Error occurred while wrapping socket in SSL. Try a different host.'); sys.exit()
+        print('SmartClient was unsuccessful in wrapping socket in SSL. Try a different host.'); sys.exit()
 
 def allows_http2(url, supports_ssl):
     client = lib.socket_helper.initialize()

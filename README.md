@@ -6,42 +6,40 @@ gif
 ## Overview
 + Project description
 + Assignment description
-+ RFC Guidelines
++ RFC guidelines
 
-### Command-line interface
-`$ python3 SmartClient.py www.google.com`
+### Usage 
+```python
+$ python3 SmartClient.py www.google.com
+```
 
-### Helper libaries
+### Helper Libaries
 ...
 
-### HTTP protocol
+### HTTP Protocol
 ...
 
-### HTTP/2 support
+### HTTP/2 Support
 + Include console output
 
-### SSL support
+### SSL Support
 ...
 
-### Sockets and TCP connection
+### Sockets and TCP Connection
 + Sockets (Client and server — pseudo-code for both)
 
 ### Cookies
 ...
 
 ## Disclaimer
-...
+This is my second time writing Python. There status codes that are **not** supported to reduce the scope of assignment requirements.
 
 ## TODO
-+ `README.md` section descriptions:
 + Clean-up `Smartclient.py`
-  + Python linting module (add reference in README)
 + Error-handling for unknown hostnames
-+ Switching between protocols (test with both HTTP/1.1 and HTTP/2.0)
-  + Identify highest supported HTTP version
 + Close out all socket TCP connections? (`s.close()`)
-+ Cookie domain name defaulting
 + Test on Linux (ssh)
++ `README.md` section descriptions
 
 ### References
 + [HTTP/1.0 RFC1945](https://tools.ietf.org/html/rfc1945)

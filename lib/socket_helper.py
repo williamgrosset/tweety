@@ -9,13 +9,13 @@ def ssl_wrap(client_socket):
     try:
         return ssl.wrap_socket(client_socket, ssl_version = ssl.PROTOCOL_TLS)
     except Exception:
-        print('Error occurred while wrapping socket in SSL. Try a different host.'); sys.exit()
+        print('SmartClient was unsuccessful in wrapping socket in SSL. Try a different host.'); sys.exit()
 
 def connect(client_socket, host, port):
     try:
         client_socket.connect((host, port))
     except Exception:
-        print('Socket connection refused with host: %s, on port: %d.' % (host, port)); sys.exit()
+        print('SmartClient refused connection with host: %s, on port: %d.' % (host, port)); sys.exit()
 
 def create_request(location, host, options = ''):
     # RFC2616 Section 5 (HTTP/1.1 BNF Grammar):
