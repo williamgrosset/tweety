@@ -11,24 +11,34 @@
 + Test on Linux (ssh)
 
 ## Overview
-This project was designed for an assignment for the [Computer Communications and Networks](https://github.com/williamgrosset/tweety/blob/master/csc361_p1.pdf) class. The purpose of this client is to support a basic `GET` request to a web server over the HTTP protocol. `SmartClient.py` will echo web server's support for HTTPs, highest HTTP version, and the available cookies. See references below for RFC papers (1945, 2616, 7450) outlining the HTTP/x.x (1.0, 1.1, 2.0) protocol.
+This project was designed for an assignment during the [Computer Communications and Networks](https://github.com/williamgrosset/tweety/blob/master/csc361_p1.pdf) class. The purpose of this client is to support a `GET` request to a web server over the HTTP protocol. `SmartClient` will echo web server's support for HTTPs, highest HTTP version, and the available cookies. See references below for RFC papers (1945, 2616, 7450) outlining the HTTP/(1.0, 1.1, 2.0) protocol.
 
 ### Usage 
-+ **Prerequisite:** Python 3.6.4
 ```bash
+# Prerequisite: Python 3.6.4
+# Example 1
 $ python3 SmartClient.py www.google.com
 
-# Example Output
 website: www.google.com
 1. Support of HTTPS: yes
 2. The newest HTTP version that the web server supports: HTTP/2.0
 3. List of cookies:
 name: -, key: 1P_JAR, domain name: .google.ca
 name: -, key: NID, domain name: .google.ca
+
+# Example 2
+$ python3 SmartClient.py www.facebook.ca
+
+website: www.facebook.com
+1. Support of HTTPS: yes
+2. The newest HTTP version that the web server supports: HTTP/2.0
+3. List of cookies:
+name: -, key: fr, domain name: .facebook.com
+name: -, key: sb, domain name: .facebook.com
 ```
 
 ### Project Layout
-`SmartClient` is the main entry point, which uses the custom helper files below. The following Python libaries used are: `re`, `sys`, `socket`, `ssl`.
+`SmartClient` is the main entry point and uses the custom helper files outlined below. Only the following Python libaries are used: `re`, `sys`, `socket`, `ssl`.
 
 ```bash
 $ cd <PROJECT-PATH>/lib/
