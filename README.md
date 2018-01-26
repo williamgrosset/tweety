@@ -1,7 +1,14 @@
 # tweety
 :bird: A barebone HTTP client built directly with sockets.
 
-gif
+![alt text](https://github.com/williamgrosset/tweety/blob/master/example.gif "SmartClient example")
+
+## TODO
++ Clean-up `Smartclient.py`
++ Error-handling for unknown hostnames
++ Close out all socket TCP connections? (`s.close()`)
++ Test on Linux (ssh)
++ `README.md` section descriptions
 
 ## Overview
 + Project description
@@ -40,18 +47,17 @@ http_parser.py        socket_helper.py
 ### Sockets and TCP Connection
 + Sockets (Client and server — pseudo-code for both)
 
+#### Client
+...
+
+#### Server
+...
+
 ### Cookies
 ...
 
-## Disclaimer
+### Disclaimer
 There are status codes that are not supported to reduce the scope of assignment requirements. This is my first time building a project with Python and the code has not been peer-reviewed.
-
-## TODO
-+ Clean-up `Smartclient.py`
-+ Error-handling for unknown hostnames
-+ Close out all socket TCP connections? (`s.close()`)
-+ Test on Linux (ssh)
-+ `README.md` section descriptions
 
 ### References
 + [HTTP/1.0 RFC1945](https://tools.ietf.org/html/rfc1945)
