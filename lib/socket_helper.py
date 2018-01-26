@@ -48,6 +48,7 @@ def send(client_socket, payload):
 def recv_stream(client_socket):
     total_data = []
     while True:
+        # TODO: Update size of recv?
         data = client_socket.recv(4096)
         if not data: break
         total_data.append(data)

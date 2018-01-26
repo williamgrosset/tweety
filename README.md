@@ -4,7 +4,7 @@
 ![alt text](https://github.com/williamgrosset/tweety/blob/master/example.gif "SmartClient example")
 
 ## TODO
-+ Clean-up `Smartclient.py`
++ Clean-up `SmartClient.py`
 + Error-handling for unknown hostnames
 + Close out all socket TCP connections? (`s.close()`)
 + Test on Linux (ssh)
@@ -14,6 +14,7 @@
 + Project description
 + Assignment description
 + RFC guidelines
++ requires python version 3.6.x
 
 ### Usage 
 ```bash

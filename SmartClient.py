@@ -7,9 +7,7 @@ from lib.http2_negotiation import allows_http2
 
 def get_url_from_args(args):
     if (len(args) != 2): print('Enter the correct amount of arguments.'); sys.exit()
-    # TODO: Stricer regex e.g require \.
-    # Accept www.facebook.com/test.html
-    url_match = re.match('([www\.]?[\w\.-]*)', args[1], re.IGNORECASE)
+    url_match = re.match('([\w\.-]*\.[\w\.-]*)', args[1], re.IGNORECASE)
     if url_match: return url_match.group(1)
     return ''
 
@@ -54,8 +52,8 @@ def main():
     while True:
         status_code = lib.http_parser.get_status_code(response)
 
-        # Success
-        if status_code == '200':
+        # Success or Not Found
+        if status_code == '200' or status_code == '404':
             print_results(
                 input_url,
                 supports_ssl,
@@ -79,8 +77,6 @@ def main():
                 response = lib.socket_helper.handle_redirect(ssl_client, input_url, 443, request)
             else:
                 response = lib.socket_helper.handle_redirect(client, url, 80, request)
-        # Not Found
-        elif status_code == '404': print('SmartClient was not able to find the resource. Try a different host.'); break
         # Unsupported Status Code
         else: print('SmartClient responded with an unsupported status code: %s.' % status_code); break
 
