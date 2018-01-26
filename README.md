@@ -11,13 +11,13 @@
 + `README.md` section descriptions
 
 ## Overview
-+ Project description
-+ Assignment description
-+ RFC guidelines
-+ requires python version 3.6.x
+This project was designed for an assignment for the [Computer Communications and Networks](https://github.com/williamgrosset/tweety/blob/master/csc361_p1.pdf) class. The purpose of this client is to support a basic `GET` request to a web server over the HTTP protocol. `SmartClient.py` will echo web server's support for HTTPs, highest HTTP version, and the available cookies. The HTTP/1.1 RFC 
+  + RFC guidelines
 
 ### Usage 
+
 ```bash
+# Prerequisite: Python 3.6.4
 $ python3 SmartClient.py www.google.com
 
 # Example Output
@@ -29,7 +29,9 @@ name: -, key: 1P_JAR, domain name: .google.ca
 name: -, key: NID, domain name: .google.ca
 ```
 
-### Helper Libaries
+### Project Layout
+`SmartClient` is the entry point that uses the custom helper files below. The Python libaries that were used are: `re`, `sys`, `socket`, `ssl`.
+
 ```bash
 $ cd <PROJECT-PATH>/lib/
 http2_negotiation.py  results_logger.py
