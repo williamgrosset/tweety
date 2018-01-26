@@ -48,6 +48,9 @@ def main():
     redirect_location = lib.http_parser.get_redirect_location(response)
     url = lib.http_parser.get_host_url(redirect_location)
 
+    SYSTEM_BREAKOUT = 500
+    redirects = 0
+
     while True:
         status_code = lib.http_parser.get_status_code(response)
 
@@ -62,8 +65,9 @@ def main():
             break
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':
-            # TODO: Verify that we won't get stuck in a 301/302
-            # loop, ensure were parsing correctly
+            redirects += 1
+            if redirects == SYSTEM_BREAKOUT: print('SmartClient had to breakout on a redirect failure.'); sys.exit()
+
             redirect_location = lib.http_parser.get_redirect_location(response)
             url = lib.http_parser.get_host_url(redirect_location)
             client = lib.socket_helper.initialize()
