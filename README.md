@@ -9,17 +9,29 @@ gif
 + RFC guidelines
 
 ### Usage 
-```python
+```bash
 $ python3 SmartClient.py www.google.com
+
+# Example Output
+website: www.google.com
+1. Support of HTTPS: yes
+2. The newest HTTP version that the web server supports: HTTP/2.0
+3. List of cookies:
+name: -, key: 1P_JAR, domain name: .google.ca
+name: -, key: NID, domain name: .google.ca
 ```
 
 ### Helper Libaries
-...
+```bash
+$ cd <PROJECT-PATH>/lib/
+http2_negotiation.py  results_logger.py
+http_parser.py        socket_helper.py
+```
 
 ### HTTP Protocol
 ...
 
-### HTTP/2 Support
+### HTTP/2.0 Support
 + Include console output
 
 ### SSL Support
@@ -32,7 +44,7 @@ $ python3 SmartClient.py www.google.com
 ...
 
 ## Disclaimer
-This is my second time writing Python. There status codes that are **not** supported to reduce the scope of assignment requirements.
+There are status codes that are not supported to reduce the scope of assignment requirements. This is my first time building a project with Python and the code has not been peer-reviewed.
 
 ## TODO
 + Clean-up `Smartclient.py`

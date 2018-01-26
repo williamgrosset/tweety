@@ -6,7 +6,7 @@ from lib.results_logger import print_results
 from lib.http2_negotiation import allows_http2
 
 def get_url_from_args(args):
-    if (len(args) != 2): print('Enter the correct amount of arguments.')
+    if (len(args) != 2): print('Enter the correct amount of arguments.'); sys.exit()
     # TODO: Stricer regex e.g require \.
     # Accept www.facebook.com/test.html
     url_match = re.match('([www\.]?[\w\.-]*)', args[1], re.IGNORECASE)
@@ -15,7 +15,7 @@ def get_url_from_args(args):
 
 def main():
     input_url = get_url_from_args(sys.argv)
-    if not input_url: print('Please enter a valid url.'); return
+    if not input_url: print('Enter a valid url.'); return
 
     # Initialize and wrap socket in SSL
     supports_ssl = False
