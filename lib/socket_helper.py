@@ -13,7 +13,9 @@ def ssl_wrap(client_socket):
 
 def connect(client_socket, host, port):
     try:
+        client_socket.settimeout(5)
         client_socket.connect((host, port))
+        client_socket.settimeout(client_socket.gettimeout())
     except Exception:
         print('SmartClient refused connection with host: %s, on port: %d.' % (host, port)); sys.exit()
 
