@@ -65,13 +65,6 @@ def main():
         elif status_code == '404':
             if is_initial_request: url = input_url; supports_ssl = True
             print('SmartClient was unable to find the requested resouce (404).')
-            print('Here are the attempted results...\n')
-            print_results(
-                url,
-                supports_ssl,
-                lib.http_parser.get_http_version(response, allows_http2(url, supports_ssl)),
-                lib.http_parser.get_cookies(response),
-            )
             return
         # Unsupported Status Code
         else: print('SmartClient received an unsupported status code: %s.' % status_code); return
