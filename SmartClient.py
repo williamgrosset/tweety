@@ -63,7 +63,6 @@ def main():
                 response = lib.socket_helper.handle_redirect(client, url, 80, request)
         # Not Found
         elif status_code == '404':
-            if is_initial_request: url = input_url; supports_ssl = True
             print('SmartClient was unable to find the requested resouce (404).')
             return
         # Unsupported Status Code
