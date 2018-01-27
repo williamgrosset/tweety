@@ -19,7 +19,7 @@ def connect(client_socket, host, port):
         print('SmartClient refused connection with host: %s, on port: %d.' % (host, port)); sys.exit()
 
 def create_request(location, host, options = ''):
-    # RFC2616 Section 5 (HTTP/1.1 BNF Grammar):
+    # RFC 2616 Section 5 (HTTP/1.1 BNF Grammar):
     # Request-Line *(( general-header
     #               | request-header
     #               | entity-header ) CRLF)

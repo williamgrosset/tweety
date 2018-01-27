@@ -39,8 +39,8 @@ def main():
     while True:
         status_code = lib.http_parser.get_status_code(response)
 
-        # Success or Not Found
-        if status_code == '200' or status_code == '404':
+        # Success
+        if status_code == '200':
             if redirects == 0: url = input_url; supports_ssl = True
             print_results(
                 url,
@@ -48,7 +48,7 @@ def main():
                 lib.http_parser.get_http_version(response, allows_http2(url, supports_ssl)),
                 lib.http_parser.get_cookies(response),
             )
-            break
+            return
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':
             redirects += 1
@@ -65,8 +65,10 @@ def main():
                 response = lib.socket_helper.handle_redirect(ssl_client, input_url, 443, request)
             else:
                 response = lib.socket_helper.handle_redirect(client, url, 80, request)
+        # Not Found
+        elif status_code == '404': print('SmartClient was unable to find the requested resouce.'); return
         # Unsupported Status Code
-        else: print('SmartClient received an unsupported status code: %s.' % status_code); break
+        else: print('SmartClient received an unsupported status code: %s.' % status_code); return
 
 if __name__ == '__main__':
     main()
