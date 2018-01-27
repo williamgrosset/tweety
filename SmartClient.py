@@ -15,8 +15,10 @@ def main():
     input_url = get_url_from_args(sys.argv)
     if not input_url: print('Enter a valid url.'); return
 
-    # Initialize and wrap socket in SSL
     supports_ssl = False
+    is_initial_request = True
+
+    # Initialize and wrap socket in SSL
     client = lib.socket_helper.initialize()
     ssl_client = lib.socket_helper.ssl_wrap(client)
 
@@ -32,16 +34,12 @@ def main():
     redirect_location = lib.http_parser.get_redirect_location(response)
     url = lib.http_parser.get_host_url(redirect_location)
 
-    # TODO: Remove breakout from redirects
-    SYSTEM_BREAKOUT = 500
-    redirects = 0
-
     while True:
         status_code = lib.http_parser.get_status_code(response)
 
         # Success
         if status_code == '200':
-            if redirects == 0: url = input_url; supports_ssl = True
+            if is_initial_request: url = input_url; supports_ssl = True
             print_results(
                 url,
                 supports_ssl,
@@ -51,9 +49,7 @@ def main():
             return
         # Moved Permanently or Found
         elif status_code == '301' or status_code == '302':
-            redirects += 1
-            if redirects == SYSTEM_BREAKOUT: print('SmartClient had to breakout on a redirect failure.'); sys.exit()
-
+            is_initial_request = False
             redirect_location = lib.http_parser.get_redirect_location(response)
             url = lib.http_parser.get_host_url(redirect_location)
             client = lib.socket_helper.initialize()
@@ -66,7 +62,17 @@ def main():
             else:
                 response = lib.socket_helper.handle_redirect(client, url, 80, request)
         # Not Found
-        elif status_code == '404': print('SmartClient was unable to find the requested resouce.'); return
+        elif status_code == '404':
+            if is_initial_request: url = input_url; supports_ssl = True
+            print('SmartClient was unable to find the requested resouce (404).')
+            print('Here are the attempted results...\n')
+            print_results(
+                url,
+                supports_ssl,
+                lib.http_parser.get_http_version(response, allows_http2(url, supports_ssl)),
+                lib.http_parser.get_cookies(response),
+            )
+            return
         # Unsupported Status Code
         else: print('SmartClient received an unsupported status code: %s.' % status_code); return
 
