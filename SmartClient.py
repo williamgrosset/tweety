@@ -32,6 +32,7 @@ def main():
     redirect_location = lib.http_parser.get_redirect_location(response)
     url = lib.http_parser.get_host_url(redirect_location)
 
+    # TODO: Remove breakout from redirects
     SYSTEM_BREAKOUT = 500
     redirects = 0
 

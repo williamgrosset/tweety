@@ -34,7 +34,7 @@ def get_host_url(location):
     return 'Could not resolve host url.'
 
 def get_status_code(response):
-    # RFC2616 Section 6.1.1
+    # RFC 2616 Section 6.1.1
     status_code_match = re.search('HTTP\/\d\.\d (\d{3}).*', response)
     if status_code_match: return status_code_match.group(1)
     return 'No status code found.'

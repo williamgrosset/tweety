@@ -13,7 +13,7 @@
 + Section descriptions: HTTP protocol, h2, ssl, sockets (tcp connection with client & server), cookies
 
 ## Overview
-This project was designed for an assignment during the [Computer Communications and Networks](https://github.com/williamgrosset/tweety/blob/master/csc361_p1.pdf) class. The purpose of this client is to support a `GET` request to a web server over the HTTP protocol. `SmartClient` will echo web server's support for HTTPs, highest HTTP version, and the available cookies. See references below for RFC papers (1945, 2616, 7450) outlining the HTTP/(1.0, 1.1, 2.0) protocol.
+This project was designed for an assignment during the [Computer Communications and Networks](https://github.com/williamgrosset/tweety/blob/master/csc361_p1.pdf) class. The purpose of this client is to support a `GET` request to a web server over the HTTP protocol. `SmartClient` will echo web server's support for HTTPs, highest HTTP version, and the available cookies. See references below for RFC (1945, 2616, 7450) papers outlining the HTTP/(1.0, 1.1, 2.0) protocol.
 
 ### Usage 
 ```bash
@@ -54,7 +54,7 @@ http_parser.py        socket_helper.py
 ```
 
 ### References
-+ [HTTP/1.0 RFC1945](https://tools.ietf.org/html/rfc1945)
-+ [HTTP/1.1 RFC2616](https://tools.ietf.org/html/rfc2616)
-+ [HTTP/2.0 RFC7540](https://tools.ietf.org/html/rfc7540)
++ [HTTP/1.0 RFC 1945](https://tools.ietf.org/html/rfc1945)
++ [HTTP/1.1 RFC 2616](https://tools.ietf.org/html/rfc2616)
++ [HTTP/2.0 RFC 7540](https://tools.ietf.org/html/rfc7540)
 + [HTTP/2.0 Negotiation](https://python-hyper.org/projects/h2/en/stable/negotiating-http2.html)
