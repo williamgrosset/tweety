@@ -31,19 +31,19 @@ def get_redirect_location(response):
 def get_host_url(location):
     location_match = re.match('http[s?]*:\/\/([\w\.-]*)\/', location, re.IGNORECASE)
     if location_match: return location_match.group(1)
-    return 'Could not resolve host url.'
+    return 'Could not resolve host URL.'
 
 def get_status_code(response):
     # RFC 2616 Section 6.1.1
     status_code_match = re.search('HTTP\/\d\.\d (\d{3}).*', response)
     if status_code_match: return status_code_match.group(1)
-    return 'No status code found.'
+    return 'Could not resolve status code.'
 
 def get_http_version(response, supports_http2):
     if supports_http2: return 'HTTP/2.0'
     http_version_match = re.search('(HTTP\/\d\.\d) \d{3}.*', response)
     if http_version_match: return http_version_match.group(1)
-    return 'No HTTP version found.'
+    return 'Could not resolve HTTP version.'
 
 def get_cookies(response):
     cookie_match = re.findall('Set-Cookie: (.*)', response)
@@ -60,6 +60,6 @@ def get_cookies(response):
             if domain_name_match: cookie.add_domain_name(domain_name_match.group(1))
 
             cookies.append(cookie)
-        cookies.sort(key=lambda cookie: cookie.name)
+        cookies.sort(key=lambda cookie: cookie.key)
         return cookies
     else: return []
