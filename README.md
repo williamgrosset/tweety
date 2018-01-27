@@ -3,17 +3,8 @@
 
 ![alt text](https://github.com/williamgrosset/tweety/blob/master/example.gif "SmartClient example")
 
-## TODO
-+ Clean-up `SmartClient.py`
-  + handle 404, 505 appropriately?
-+ Error-handling for unknown hostnames
-+ Close out all socket TCP connections? (`s.close()`)
-+ Test on Linux (ssh)
-+ Test all URLs
-+ Section descriptions: HTTP protocol, h2, ssl, sockets (tcp connection with client & server), cookies
-
 ## Overview
-This project was designed for an assignment during the [Computer Communications and Networks](https://github.com/williamgrosset/tweety/blob/master/csc361_p1.pdf) class. The purpose of this client is to support a `GET` request to a web server over the HTTP protocol. `SmartClient` will echo web server's support for HTTPs, highest HTTP version, and the available cookies. See references below for RFC (1945, 2616, 7450) papers outlining the HTTP/(1.0, 1.1, 2.0) protocol.
+This project was an asignment for the [Computer Communications and Networks](https://github.com/williamgrosset/tweety/blob/master/csc361_p1.pdf) class. The goal is to learn about the HTTP protocol, TCP connections, and socket programming. The purpose of this client is to support a `GET` request to a web server over the HTTP protocol. `SmartClient` will echo the web server's support for HTTPs, highest HTTP version, and the available cookies. See references below for RFC (1945, 2616, 7450) papers outlining the HTTP/(1.0, 1.1, 2.0) protocol.
 
 ### Usage 
 ```bash
@@ -45,7 +36,7 @@ name: -, key: TS014bf86f, domain name: .uvic.ca
 ```
 
 ### Project Layout
-`SmartClient` is the main entry point and uses the custom helper files outlined below. Only the following Python libaries are used: `re`, `sys`, `socket`, `ssl`.
+`SmartClient` is the main entry point and uses the local helper files outlined below. Only the following Python libaries are used: `re`, `sys`, `socket`, `ssl`.
 
 ```bash
 $ cd <PROJECT-PATH>/lib/

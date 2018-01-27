@@ -12,7 +12,6 @@ def ssl_wrap(client_socket):
         print('SmartClient was unsuccessful in wrapping socket in SSL. Try a different host.'); sys.exit()
 
 def connect(client_socket, host, port):
-    # TODO: Fix 443 failing and default to port 80
     try:
         client_socket.connect((host, port))
     except Exception:
