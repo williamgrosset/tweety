@@ -29,20 +29,6 @@ def main():
 
     # Handle response segments
     response = lib.socket_helper.recv_stream(ssl_client)
-
-    # Handle initial success response
-    status_code = lib.http_parser.get_status_code(response)
-    if status_code == '200':
-        supports_ssl = True
-        print_results(
-            input_url,
-            supports_ssl,
-            lib.http_parser.get_http_version(response, allows_http2(input_url, supports_ssl)),
-            lib.http_parser.get_cookies(response),
-        )
-        ssl_client.close()
-        return
-
     redirect_location = lib.http_parser.get_redirect_location(response)
     url = lib.http_parser.get_host_url(redirect_location)
 
@@ -54,6 +40,7 @@ def main():
 
         # Success or Not Found
         if status_code == '200' or status_code == '404':
+            if redirects == 0: url = input_url; supports_ssl = True
             print_results(
                 url,
                 supports_ssl,
@@ -78,11 +65,7 @@ def main():
             else:
                 response = lib.socket_helper.handle_redirect(client, url, 80, request)
         # Unsupported Status Code
-        else: print('SmartClient responded with an unsupported status code: %s.' % status_code); break
-
-    # Close out any remaining connections
-    ssl_client.close()
-    client.close()
+        else: print('SmartClient received an unsupported status code: %s.' % status_code); break
 
 if __name__ == '__main__':
     main()
