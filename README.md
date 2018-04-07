@@ -1,6 +1,4 @@
 # tweety
-:bird: A barebone HTTP client built directly with sockets.
-
 ![alt text](https://github.com/williamgrosset/tweety/blob/master/example.gif "SmartClient example")
 
 ## Overview
