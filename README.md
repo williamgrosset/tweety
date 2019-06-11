@@ -2,7 +2,7 @@
 ![alt text](https://github.com/williamgrosset/tweety/blob/master/example.gif "SmartClient example")
 
 ## Overview
-This project was an assignment for the [Computer Communications and Networks](https://github.com/williamgrosset/tweety/blob/master/csc361_p1.pdf) class at the University of Victoria. The goal is to learn about the HTTP protocol, TCP connections, and socket programming. The purpose of this client is to support a `GET` request to a web server via sockets. `SmartClient` will echo the web server's support for HTTPs, highest HTTP version, and the available cookies. See references below for RFC (1945, 2616, 7450) papers outlining the HTTP/(1.0, 1.1, 2.0) protocol.
+The purpose of this client is to support a `GET` request to a web server via sockets and to learn about the HTTP protocol, TCP connections, and socket programming. `SmartClient` will echo the web server's support for HTTPs, highest HTTP version, and the available cookies. See references below for RFC (1945, 2616, 7450) papers outlining the HTTP/(1.0, 1.1, 2.0) protocol.
 
 ### Usage 
 ```bash
